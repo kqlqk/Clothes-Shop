@@ -16,13 +16,14 @@ public class Tag {
     @Column(name = "id", insertable = false, updatable = false)
     private long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "name", nullable = false, length = 100)
-    private String name;
+    private Tags name;
 
     @ManyToMany(mappedBy = "tags")
     private List<Product> products;
 
-    public Tag(String name) {
+    public Tag(Tags name) {
         this.name = name;
     }
 }
