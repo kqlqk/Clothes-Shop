@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Entity
-@Table(name = "tag", catalog = "product", schema = "public")
+@Table(name = "tag")
 @Data
 @NoArgsConstructor
 public class Tag {
