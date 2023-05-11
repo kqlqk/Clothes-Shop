@@ -8,6 +8,8 @@ import me.kqlqk.shop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
@@ -27,6 +29,17 @@ public class ProductServiceImpl implements ProductService {
     public Product getByName(String name) {
         return productRepository.findByName(name).orElseThrow(() ->
                 new ProductNotFoundException("Product with name = " + name + " not found"));
+    }
+
+    @Override
+    public List<Product> getAll() {
+        List<Product> products = productRepository.findAll();
+
+        if (products == null || products.isEmpty()) {
+            throw new ProductNotFoundException("Products not found");
+        }
+
+        return products;
     }
 
     @Override
