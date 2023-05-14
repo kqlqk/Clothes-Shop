@@ -3,9 +3,11 @@ package me.kqlqk.shop.service;
 import me.kqlqk.shop.ServiceTest;
 import me.kqlqk.shop.exception.ProductExistsException;
 import me.kqlqk.shop.exception.ProductNotFoundException;
+import me.kqlqk.shop.model.Color;
 import me.kqlqk.shop.model.Product;
-import me.kqlqk.shop.model.Tag;
-import me.kqlqk.shop.model.Tags;
+import me.kqlqk.shop.model.Size;
+import me.kqlqk.shop.model.enums.Colors;
+import me.kqlqk.shop.model.enums.Sizes;
 import me.kqlqk.shop.repository.ProductRepository;
 import me.kqlqk.shop.service.impl.ProductServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -29,11 +31,14 @@ public class ProductServiceImplIT {
     public void add_shouldAddProductToDB() {
         int oldSize = productRepository.findAll().size();
 
-        List<Tag> tags = new ArrayList<>();
-        tags.add(new Tag(Tags.WHITE));
-        tags.add(new Tag(Tags.L));
+        List<Color> colors = new ArrayList<>();
+        colors.add(new Color(Colors.GRAY));
+
+        List<Size> sizes = new ArrayList<>();
+        sizes.add(new Size(Sizes.XS));
+
         Product product = new Product(
-                "Black oversize t-shirt", 10, 0, "...", tags, "/tshirts/3");
+                "Black oversize t-shirt", 10, 0, "...", colors, sizes, "/tshirts/3");
 
         productService.add(product);
 
@@ -68,7 +73,7 @@ public class ProductServiceImplIT {
     @Test
     public void update_shouldThrowException() {
         Product product = new Product(
-                "Black oversize t-shirt", 10, 0, "...", null, "/tshirts/3");
+                "Black oversize t-shirt", 10, 0, "...", null, null, "/tshirts/3");
         product.setId(99);
         assertThrows(ProductNotFoundException.class, () -> productService.update(product));
     }
