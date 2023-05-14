@@ -1,15 +1,17 @@
 package me.kqlqk.shop.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import me.kqlqk.shop.model.enums.Sizes;
 
 import java.util.List;
 
 @Entity
 @Table(name = "size")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class Size {
     @Id
