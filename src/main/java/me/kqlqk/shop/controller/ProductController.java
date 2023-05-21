@@ -1,0 +1,46 @@
+package me.kqlqk.shop.controller;
+
+import me.kqlqk.shop.model.Product;
+import me.kqlqk.shop.service.ProductService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Controller
+@RequestMapping("/catalog")
+public class ProductController {
+    private final ProductService productService;
+
+    @Autowired
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
+
+    @GetMapping("/{id}")
+    public String getProductPage(@PathVariable long id, Model model) throws IOException {
+        Product product = productService.getById(id);
+        model.addAttribute("product", product);
+
+        List<String> fileNames = Files.walk(Paths.get("src/main/resources/static/images" + product.getPath()))
+                .map(Path::getFileName)
+                .map(Path::toString)
+                .filter(e -> e.endsWith(".png"))
+                .collect(Collectors.toList());
+
+        model.addAttribute("files", fileNames);
+
+
+        return "catalog/ProductPage";
+    }
+
+}
