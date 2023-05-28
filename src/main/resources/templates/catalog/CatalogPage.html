@@ -10,9 +10,9 @@
 <body class="font">
 <header th:insert="~{Header}"></header>
 
-<div class="row justify-content-center main-content mt-5">
+<div class="row justify-content-center main-content mtb-20px">
     <div class="col-lg-3 col-md-4 col-sm-6 mb-4" th:each="product : ${products}">
-        <a th:href="@{/catalog/{id}(id=${product.getId()})}" class="text-decoration-none">
+        <a th:href="@{/catalog/{id}(id=${product.getId()})}" class="text-decoration-none text-dark">
             <div class="card">
 
                 <div class="image-container">
@@ -39,7 +39,7 @@
         padding-right: 20%;
     }
 
-    .mt-5 {
+    .mtb-20px {
         margin-top: 20px;
         margin-bottom: 20px;
     }

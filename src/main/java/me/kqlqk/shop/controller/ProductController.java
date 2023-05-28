@@ -1,5 +1,6 @@
 package me.kqlqk.shop.controller;
 
+import me.kqlqk.shop.dto.ProductBuyingDTO;
 import me.kqlqk.shop.model.Product;
 import me.kqlqk.shop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,6 @@ public class ProductController {
     @GetMapping("/{id}")
     public String getProductPage(@PathVariable long id, Model model) throws IOException {
         Product product = productService.getById(id);
-        model.addAttribute("product", product);
 
         List<String> fileNames = Files.walk(Paths.get(IMAGES_FOLDER + "/" + product.getPath()))
                 .map(Path::getFileName)
@@ -41,8 +41,9 @@ public class ProductController {
                 .filter(e -> e.endsWith(".png"))
                 .collect(Collectors.toList());
 
+        model.addAttribute("product", product);
         model.addAttribute("files", fileNames);
-
+        model.addAttribute("productBuyingDTO", new ProductBuyingDTO());
 
         return "catalog/ProductPage";
     }

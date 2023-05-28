@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ControllerTest
@@ -29,6 +30,7 @@ public class CatalogControllerIT {
         Mockito.when(productService.getAll()).thenReturn(mockProducts);
 
         mockMvc.perform(get("/catalog"))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(view().name("catalog/CatalogPage"))
                 .andExpect(model().attribute("products", mockProducts));
