@@ -27,4 +27,10 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
+
+    public Order(Color color, Size size, Product product) {
+        this.color = color;
+        this.size = size;
+        this.product = product;
+    }
 }

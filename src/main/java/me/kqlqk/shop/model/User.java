@@ -35,4 +35,11 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "order_id"))
     private Order currentOrder;
+
+    public User(String name, String address, List<Order> lastOrders, Order currentOrder) {
+        this.name = name;
+        this.address = address;
+        this.lastOrders = lastOrders;
+        this.currentOrder = currentOrder;
+    }
 }
