@@ -30,13 +30,13 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "order_id"))
     private List<Order> lastOrders;
 
-    @OneToOne
+    @OneToMany
     @JoinTable(name = "current_order",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "order_id"))
-    private Order currentOrder;
+    private List<Order> currentOrder;
 
-    public User(String name, String address, List<Order> lastOrders, Order currentOrder) {
+    public User(String name, String address, List<Order> lastOrders, List<Order> currentOrder) {
         this.name = name;
         this.address = address;
         this.lastOrders = lastOrders;

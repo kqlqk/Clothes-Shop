@@ -7,7 +7,7 @@ import java.util.List;
 
 @Service
 public interface OrderService {
-    Order getCurrentOrder(long userId);
+    List<Order> getCurrentOrder(long userId);
 
     List<Order> getLastOrders(long userId);
 

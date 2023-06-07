@@ -25,7 +25,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order getCurrentOrder(long userId) {
+    public List<Order> getCurrentOrder(long userId) {
         User user = userService.getById(userId);
 
         if (user.getCurrentOrder() == null) {
