@@ -25,21 +25,13 @@ public class User {
     private String address;
 
     @OneToMany
-    @JoinTable(name = "last_order",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "order_id"))
-    private List<Order> lastOrders;
+    @JoinColumn(name = "user_id")
+    private List<OrderHistory> OrderHistory;
 
-    @OneToMany
-    @JoinTable(name = "current_order",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "order_id"))
-    private List<Order> currentOrder;
 
-    public User(String name, String address, List<Order> lastOrders, List<Order> currentOrder) {
+    public User(String name, String address, List<OrderHistory> OrderHistory) {
         this.name = name;
         this.address = address;
-        this.lastOrders = lastOrders;
-        this.currentOrder = currentOrder;
+        this.OrderHistory = OrderHistory;
     }
 }
