@@ -24,7 +24,7 @@ public class UserServiceImplIT {
     public void add_shouldAddUserToDB() {
         int oldSize = userRepository.findAll().size();
 
-        User user = new User("test", "test2", null, null);
+        User user = new User("test", "test2", null);
 
         userService.add(user);
 
@@ -53,7 +53,7 @@ public class UserServiceImplIT {
 
     @Test
     public void update_shouldThrowException() {
-        User user = new User("test1", "test2", null, null);
+        User user = new User("test1", "test2", null);
         assertThrows(UserNotFoundException.class, () -> userService.update(user));
     }
 }
