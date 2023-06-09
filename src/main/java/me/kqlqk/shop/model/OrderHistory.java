@@ -1,6 +1,7 @@
 package me.kqlqk.shop.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class OrderHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,4 +37,12 @@ public class OrderHistory {
 
     @Column(name = "released", nullable = false)
     private boolean released;
+
+    public OrderHistory(User user, Order order, LocalDateTime date, long uuid, boolean released) {
+        this.user = user;
+        this.order = order;
+        this.date = date;
+        this.uuid = uuid;
+        this.released = released;
+    }
 }
