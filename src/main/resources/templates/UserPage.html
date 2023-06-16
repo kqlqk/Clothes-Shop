@@ -100,9 +100,69 @@
             <div th:each="s : ${address.split(';')}">
                 <h4 th:text="${s}"></h4>
             </div>
+            <br/>
 
             <a class="btn btn-outline-dark" href="#">Edit</a>
             <a class="btn btn-outline-dark" href="#">Delete</a>
+        </div>
+
+        <div id="edit-user-page-section" style="display: none;">
+            <h3>Edit information</h3>
+
+            <form th:method="put" th:action="@{/user/{id}(id=${user.getId()})}" th:object="${userDTO}">
+                <div class="row">
+                    <div class="col-sm-7 col-md-5 col-lg-4">
+                        <label class="form-label" for="name">Name:</label>
+                        <input class="form-control" type="text" th:field="*{name}" id="name" placeholder="Name">
+                        <br/>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-7 col-md-5 col-lg-4">
+                        <label class="form-label" for="country">Contry:</label>
+                        <input class="form-control" type="text" th:field="*{country}" id="country" placeholder="Spain">
+                        <br/>
+                    </div>
+
+                    <div class="col-sm-7 col-md-5 col-lg-4">
+                        <label class="form-label" for="postalCode">Postal-code:</label>
+                        <input class="form-control" type="text" th:field="*{postalCode}" id="postalCode"
+                               placeholder="00000">
+                        <br/>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-7 col-md-5 col-lg-4">
+                        <label class="form-label" for="city">City:</label>
+                        <input class="form-control" type="text" th:field="*{city}" id="city" placeholder="Poznan">
+                        <br/>
+                    </div>
+
+                    <div class="col-sm-7 col-md-5 col-lg-4">
+                        <label class="form-label" for="street">Street:</label>
+                        <input class="form-control" type="text" th:field="*{street}" id="street" placeholder="Main St">
+                        <br/>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-7 col-md-5 col-lg-4">
+                        <label class="form-label" for="home">Home:</label>
+                        <input class="form-control" type="text" th:field="*{home}" id="home" placeholder="4">
+                        <br/>
+                    </div>
+
+                    <div class="col-sm-7 col-md-5 col-lg-4">
+                        <label class="form-label" for="flat">Flat:</label>
+                        <input class="form-control" type="text" th:field="*{flat}" id="flat" placeholder="4">
+                        <br/>
+                    </div>
+                </div>
+
+                <input class="btn btn-outline-dark" type="submit" value="Update">
+            </form>
         </div>
 
 
@@ -116,22 +176,29 @@
     function showCurrentOrder() {
         document.getElementById("show-address-section").style.display = "none";
         document.getElementById("previous-orders-section").style.display = "none";
+        document.getElementById("edit-user-page-section").style.display = "none";
         document.getElementById("current-order-section").style.display = "block";
     }
 
     function showLastOrders() {
         document.getElementById("show-address-section").style.display = "none";
         document.getElementById("current-order-section").style.display = "none";
+        document.getElementById("edit-user-page-section").style.display = "none";
         document.getElementById("previous-orders-section").style.display = "block";
     }
 
     function showAddress() {
         document.getElementById("current-order-section").style.display = "none";
         document.getElementById("previous-orders-section").style.display = "none";
+        document.getElementById("edit-user-page-section").style.display = "none";
         document.getElementById("show-address-section").style.display = "block";
     }
 
     function editProfile() {
+        document.getElementById("current-order-section").style.display = "none";
+        document.getElementById("previous-orders-section").style.display = "none";
+        document.getElementById("show-address-section").style.display = "none";
+        document.getElementById("edit-user-page-section").style.display = "block";
     }
 
     function logout() {

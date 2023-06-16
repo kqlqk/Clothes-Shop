@@ -38,6 +38,20 @@ public class UserServiceImpl implements UserService {
             throw new UserNotFoundException("User with id = " + user.getId() + " not found");
         }
 
+        User userDb = getById(user.getId());
+
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(userDb.getName());
+        }
+
+        if (user.getAddress() == null || user.getAddress().isBlank()) {
+            user.setAddress(userDb.getAddress());
+        }
+
+        if (user.getOrderHistory() == null || user.getOrderHistory().isEmpty()) {
+            user.setOrderHistory(userDb.getOrderHistory());
+        }
+
         userRepository.save(user);
     }
 }
