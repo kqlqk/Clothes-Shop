@@ -18,18 +18,22 @@ public class User {
     @Column(name = "id", insertable = false, updatable = false)
     private long id;
 
+    @Column(name = "email", nullable = false, unique = true, length = 50)
+    private String email;
+
     @Column(name = "name", nullable = false, length = 50)
     private String name;
 
     @Column(name = "address")
     private String address;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private List<OrderHistory> OrderHistory;
 
 
-    public User(String name, String address, List<OrderHistory> OrderHistory) {
+    public User(String email, String name, String address, List<OrderHistory> OrderHistory) {
+        this.email = email;
         this.name = name;
         this.address = address;
         this.OrderHistory = OrderHistory;
