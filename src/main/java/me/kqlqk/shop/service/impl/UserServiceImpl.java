@@ -28,6 +28,9 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsById(user.getId())) {
             throw new UserExistsException("User with id = " + user.getId() + " exists");
         }
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new UserExistsException("User with email = " + user.getEmail() + " exists");
+        }
 
         userRepository.save(user);
     }
@@ -39,6 +42,15 @@ public class UserServiceImpl implements UserService {
         }
 
         User userDb = getById(user.getId());
+
+        if (!userDb.getEmail().equals(user.getEmail()) && userRepository.existsByEmail(user.getEmail())) {
+            throw new UserExistsException("User with email = " + user.getEmail() + " exists");
+        }
+
+
+        if (user.getEmail() == null || user.getEmail().isBlank()) {
+            user.setEmail(userDb.getEmail());
+        }
 
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(userDb.getName());
@@ -53,5 +65,10 @@ public class UserServiceImpl implements UserService {
         }
 
         userRepository.save(user);
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
     }
 }

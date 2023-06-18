@@ -24,7 +24,7 @@ public class UserServiceImplIT {
     public void add_shouldAddUserToDB() {
         int oldSize = userRepository.findAll().size();
 
-        User user = new User("test", "test2", null);
+        User user = new User("test@test.com", "test", "test2", null);
 
         userService.add(user);
 
@@ -38,7 +38,12 @@ public class UserServiceImplIT {
         User user = userService.getById(1);
         user.setName("new name");
 
-        assertThrows(UserExistsException.class, () -> userService.add(user));
+        User finalUser1 = user;
+        assertThrows(UserExistsException.class, () -> userService.add(finalUser1));
+
+        user = new User("email@email.com", "a", "b", null);
+        User finalUser2 = user;
+        assertThrows(UserExistsException.class, () -> userService.add(finalUser2));
     }
 
     @Test
@@ -53,7 +58,13 @@ public class UserServiceImplIT {
 
     @Test
     public void update_shouldThrowException() {
-        User user = new User("test1", "test2", null);
-        assertThrows(UserNotFoundException.class, () -> userService.update(user));
+        User user = new User("test@test.com", "test1", "test2", null);
+        User finalUser1 = user;
+        assertThrows(UserNotFoundException.class, () -> userService.update(finalUser1));
+
+        user = userService.getById(1);
+        user.setEmail("email2@email.com");
+        User finalUser2 = user;
+        assertThrows(UserExistsException.class, () -> userService.update(finalUser2));
     }
 }
