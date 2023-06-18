@@ -6,6 +6,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.NonNull;
+import me.kqlqk.shop.exception.TokenException;
 import me.kqlqk.shop.exception.UserNotFoundException;
 import me.kqlqk.shop.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
@@ -59,7 +60,7 @@ public class JwtUtil {
 
             return true;
         } catch (ExpiredJwtException expEx) {
-            throw new TokenException("Token expired"); // TODO Create exception class
+            throw new TokenException("Token expired");
         } catch (UnsupportedJwtException unsEx) {
             throw new TokenException("Token unsupported");
         } catch (MalformedJwtException mjEx) {
@@ -84,7 +85,7 @@ public class JwtUtil {
                     .getBody()
                     .getSubject();
         } catch (ExpiredJwtException expEx) {
-            throw new TokenException("Token expired"); // TODO Create exception class
+            throw new TokenException("Token expired");
         } catch (UnsupportedJwtException unsEx) {
             throw new TokenException("Token unsupported");
         } catch (MalformedJwtException mjEx) {
