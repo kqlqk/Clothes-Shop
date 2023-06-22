@@ -25,7 +25,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping
+    @GetMapping // TODO display email
     public String getUserPage(@PathVariable long id, Model model) {
         User user = userService.getById(id);
 
