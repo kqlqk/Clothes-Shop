@@ -20,7 +20,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Override
     public RefreshToken getByUserEmail(String email) {
-        return refreshTokenRepository.findByUserEmail(email);
+        return refreshTokenRepository.findByUserEmail(email).orElseThrow(
+                () -> new RefreshTokenNotFoundException("Refresh token with email = " + email + " exists"));
     }
 
     @Override
@@ -42,5 +43,10 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         }
 
         refreshTokenRepository.save(refreshToken);
+    }
+
+    @Override
+    public boolean existsByUserEmail(String email) {
+        return refreshTokenRepository.existsByUserEmail(email);
     }
 }

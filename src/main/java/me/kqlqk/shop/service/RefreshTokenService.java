@@ -10,4 +10,6 @@ public interface RefreshTokenService {
     void add(RefreshToken refreshToken);
 
     void update(RefreshToken refreshToken);
+
+    boolean existsByUserEmail(String email);
 }
