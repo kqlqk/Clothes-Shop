@@ -8,6 +8,9 @@ import io.jsonwebtoken.security.SignatureException;
 import lombok.NonNull;
 import me.kqlqk.shop.exception.TokenException;
 import me.kqlqk.shop.exception.UserNotFoundException;
+import me.kqlqk.shop.model.RefreshToken;
+import me.kqlqk.shop.model.User;
+import me.kqlqk.shop.service.RefreshTokenService;
 import me.kqlqk.shop.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -20,15 +23,22 @@ import java.util.Date;
 @Component
 public class JwtUtil {
     private final UserService userService;
+    private final RefreshTokenService refreshTokenService;
     private final Key accessKey;
+    private final Key refreshKey;
 
-    public JwtUtil(UserService userService, @Value("${jwt.secret}") String accessSecret) {
+    public JwtUtil(UserService userService,
+                   RefreshTokenService refreshTokenService,
+                   @Value("${jwt.access.secret}") String accessSecret,
+                   @Value("${jwt.refresh.secret}") String refreshSecret) {
         this.userService = userService;
+        this.refreshTokenService = refreshTokenService;
         accessKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(accessSecret));
+        refreshKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(refreshSecret));
     }
 
     public String generateAccessToken(@NonNull String email) {
-        if (!userService.existsByEmail(userEmail)) { // TODO implement method
+        if (!userService.existsByEmail(email)) {
             throw new UserNotFoundException("User with email = " + email + " not found");
         }
 
@@ -41,8 +51,40 @@ public class JwtUtil {
                 .compact();
     }
 
+    public String generateAndSaveOrUpdateRefreshToken(@NonNull String email) {
+        if (!userService.existsByEmail(email)) {
+            throw new UserNotFoundException("User with email = " + email + " not found");
+        }
+
+        User user = userService.getByEmail(email);
+
+        Date expiresIn = Date.from(LocalDateTime.now().plusDays(30).atZone(ZoneId.systemDefault()).toInstant());
+
+        String token = Jwts.builder()
+                .setSubject(email)
+                .setExpiration(expiresIn)
+                .signWith(refreshKey, SignatureAlgorithm.HS256)
+                .compact();
+
+        RefreshToken refreshToken;
+        if (!refreshTokenService.existsByUserEmail(email)) {
+            refreshToken = new RefreshToken(user, token);
+            refreshTokenService.add(refreshToken);
+        } else {
+            refreshToken = refreshTokenService.getByUserEmail(email);
+            refreshToken.setToken(token);
+            refreshTokenService.update(refreshToken);
+        }
+
+        return token;
+    }
+
     public boolean validateAccessToken(@NonNull String accessToken) {
         return validateToken(accessToken);
+    }
+
+    public boolean validateRefreshToken(@NonNull String refreshToken) {
+        return validateToken(refreshToken);
     }
 
     private boolean validateToken(@NonNull String token) {
@@ -54,7 +96,7 @@ public class JwtUtil {
                     .getBody()
                     .getSubject();
 
-            if (!userService.existsByEmail(email)) { // TODO implement method
+            if (!userService.existsByEmail(email)) {
                 throw new UserNotFoundException("User with email = " + email + " not found");
             }
 
@@ -73,6 +115,10 @@ public class JwtUtil {
     }
 
     public String getEmailFromAccessToken(String token) {
+        return getEmailFromToken(token);
+    }
+
+    public String getEmailFromRefreshToken(String token) {
         return getEmailFromToken(token);
     }
 
