@@ -4,9 +4,13 @@ import me.kqlqk.shop.model.RefreshToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
-    RefreshToken findByUserEmail(String userEmail);
+    Optional<RefreshToken> findByUserEmail(String userEmail);
+
+    boolean existsByUserEmail(String email);
 
     boolean existsByToken(String token);
 }
