@@ -29,13 +29,13 @@ public class User {
 
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
-    private List<OrderHistory> OrderHistory;
+    private List<OrderHistory> orderHistory;
 
 
     public User(String email, String name, String address, List<OrderHistory> OrderHistory) {
         this.email = email;
         this.name = name;
         this.address = address;
-        this.OrderHistory = OrderHistory;
+        this.orderHistory = OrderHistory;
     }
 }
