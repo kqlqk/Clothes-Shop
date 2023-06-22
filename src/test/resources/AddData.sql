@@ -14,7 +14,8 @@ delete
 from buying_order;
 delete
 from order_history;
-
+delete
+from refresh_token;
 
 ALTER SEQUENCE product_color_id_seq RESTART WITH 1;
 ALTER SEQUENCE product_size_id_seq RESTART WITH 1;
@@ -24,6 +25,7 @@ ALTER SEQUENCE size_id_seq RESTART WITH 1;
 ALTER SEQUENCE customer_id_seq RESTART WITH 1;
 ALTER SEQUENCE buying_order_id_seq RESTART WITH 1;
 ALTER SEQUENCE order_history_id_seq RESTART WITH 1;
+ALTER SEQUENCE refresh_token_id_seq RESTART WITH 1;
 
 
 insert into product (name, price, path, description)
@@ -86,3 +88,7 @@ values (1, 1, '2023-05-19 10:13:54', 1, true);
 
 insert into order_history (user_id, order_id, order_date, uuid, released)
 values (2, 2, '2023-01-19 10:23:54', 2, false);
+
+
+insert into refresh_token (customer_id, token)
+values (1, 'token1');
