@@ -69,11 +69,11 @@ insert into product_size (product_id, size_id)
 values (2, 2);
 
 
-insert into customer (name, address, email)
-values ('test1', 'test2', 'email@email.com');
+insert into customer (name, password, address, email)
+values ('test1', 'password', 'test2', 'email@email.com');
 
-insert into customer (name, address, email)
-values ('test3', 'test4', 'email2@email.com');
+insert into customer (name, password, address, email)
+values ('test3', 'password', 'test4', 'email2@email.com');
 
 
 insert into buying_order (product_id, size_id, color_id)
