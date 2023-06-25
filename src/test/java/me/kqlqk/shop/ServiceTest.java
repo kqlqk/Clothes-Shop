@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 
-@SpringBootTest(classes = Main.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(classes = Main.class)
 @TestPropertySource("/application.properties")
 @Sql(value = {"/AddData.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 public @interface ServiceTest {

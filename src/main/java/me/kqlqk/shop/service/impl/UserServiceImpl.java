@@ -7,15 +7,23 @@ import me.kqlqk.shop.model.User;
 import me.kqlqk.shop.repository.UserRepository;
 import me.kqlqk.shop.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    @Autowired
+    public void setPasswordEncoder(@Lazy PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -36,6 +44,8 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new UserExistsException("User with email = " + user.getEmail() + " exists");
         }
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         userRepository.save(user);
     }
@@ -61,6 +71,10 @@ public class UserServiceImpl implements UserService {
             user.setName(userDb.getName());
         }
 
+        if (user.getPassword() == null || user.getPassword().isBlank()) {
+            user.setPassword(userDb.getPassword());
+        }
+
         if (user.getAddress() == null || user.getAddress().isBlank()) {
             user.setAddress(userDb.getAddress());
         }
@@ -68,6 +82,8 @@ public class UserServiceImpl implements UserService {
         if (user.getOrderHistory() == null || user.getOrderHistory().isEmpty()) {
             user.setOrderHistory(userDb.getOrderHistory());
         }
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         userRepository.save(user);
     }
