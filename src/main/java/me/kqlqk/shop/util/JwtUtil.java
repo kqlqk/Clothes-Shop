@@ -131,7 +131,7 @@ public class JwtUtil {
                     .getBody()
                     .getSubject();
         } catch (ExpiredJwtException expEx) {
-            throw new TokenException("Token expired");
+            return expEx.getClaims().getSubject();
         } catch (UnsupportedJwtException unsEx) {
             throw new TokenException("Token unsupported");
         } catch (MalformedJwtException mjEx) {
