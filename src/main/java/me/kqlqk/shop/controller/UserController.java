@@ -6,6 +6,7 @@ import me.kqlqk.shop.model.User;
 import me.kqlqk.shop.service.UserService;
 import me.kqlqk.shop.util.Formatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,13 @@ public class UserController {
 
     @GetMapping // TODO display email
     public String getUserPage(@PathVariable long id, Model model) {
-        User user = userService.getById(id);
+        String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userService.getByEmail(email);
+
+        if (userService.getByEmail(email).getId() != id) {
+            // TODO: 24/06/2023 throw exception
+            return null;
+        }
 
         model.addAttribute("currentOrder",
                 user.getOrderHistory().stream().filter(e -> !e.isReleased()).collect(Collectors.toList()));
