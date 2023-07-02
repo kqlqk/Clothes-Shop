@@ -27,6 +27,12 @@ public class GlobalAttributeFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
+        if (request.getCookies() == null) {
+            request.setAttribute("userProfileOrLoginPagePath", "/login");
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         for (Cookie c : request.getCookies()) {
             if (c.getName().equals("accessToken")) {
                 if (jwtUtil.validateAccessToken(c.getValue())) {
