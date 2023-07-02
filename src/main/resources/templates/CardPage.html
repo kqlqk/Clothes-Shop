@@ -12,7 +12,7 @@
 <body class="font">
 <header th:insert="~{Header}"></header>
 
-<div class="row justify-content-center main-content mtb-20px">
+<div class="row justify-content-center main-content">
     <div th:if="${!orders.isEmpty()}">
         <div th:each="order : ${orders}">
             <div class="card mb-3 position-relative">

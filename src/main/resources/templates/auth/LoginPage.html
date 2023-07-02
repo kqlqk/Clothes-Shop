@@ -12,15 +12,39 @@
 <body class="font">
 <header th:insert="~{Header}"></header>
 
-<form th:method="post" th:action="@{/login}" th:object="${loginDTO}">
-    <label class="form-label" for="email">Email:</label>
-    <input class="form-control" type="text" th:field="*{email}" id="email"/>
-    <br>
-    <label class="form-label" for="password">Password:</label>
-    <input class="form-control" type="text" th:field="*{password}" id="password"/>
+<div class="row justify-content-center main-content mtb-20px">
+    <form th:method="post" th:action="@{/login}" th:object="${loginDTO}">
+        <label class="form-label" for="email">Email</label>
+        <input class="form-control" type="text" th:field="*{email}" id="email" placeholder="john123@mail.com"/>
+        <br>
 
-    <button class="btn btn-outline-primary btn-lg" type="submit">Log in</button>
-</form>
+        <label class="form-label" for="password">Password</label>
+        <input class="form-control" type="text" th:field="*{password}" id="password" placeholder="Password123"/>
+        <div style="margin-bottom: 10%;"></div>
+
+        <button style="width: 100%" class="btn btn-outline-dark btn-lg" type="submit">Sign in</button>
+    </form>
+
+    <div style="margin-bottom: 5%;"></div>
+    <div class="row">
+        <div class="col">
+            <a class="text-decoration-none text-dark" th:href="@{/registration}">Create an account</a>
+        </div>
+        <div class="col">
+            <a class="text-decoration-none text-dark" th:href="@{/recovery}">Forgot password?</a>
+        </div>
+    </div>
+
+</div>
 
 </body>
 </html>
+
+<style>
+    .main-content {
+        margin-top: 20px;
+        margin-bottom: 20px;
+        padding-left: 35%;
+        padding-right: 35%;
+    }
+</style>
