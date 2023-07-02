@@ -1,4 +1,4 @@
-package me.kqlqk.shop.security.filter;
+package me.kqlqk.shop.cfg.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -8,7 +8,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import me.kqlqk.shop.exception.TokenException;
 import me.kqlqk.shop.service.RefreshTokenService;
+import me.kqlqk.shop.service.UserService;
 import me.kqlqk.shop.util.JwtUtil;
+import org.junit.jupiter.api.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,15 +24,18 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
+@Order(1)
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
     private UserDetailsService userDetailsService;
+    private final UserService userService;
 
     @Autowired
-    public JwtFilter(JwtUtil jwtUtil, RefreshTokenService refreshTokenService) {
+    public JwtFilter(JwtUtil jwtUtil, RefreshTokenService refreshTokenService, UserService userService) {
         this.jwtUtil = jwtUtil;
         this.refreshTokenService = refreshTokenService;
+        this.userService = userService;
     }
 
     @Autowired
@@ -52,21 +57,33 @@ public class JwtFilter extends OncePerRequestFilter {
         email = jwtUtil.getEmailFromAccessToken(accessTokenFromRequest); // TODO: 22/06/2023 Handle exceptions
 
         try {
-            jwtUtil.validateAccessToken(accessTokenFromRequest);
-        } catch (TokenException e) {
+            jwtUtil.accessTokenErrorChecking(accessTokenFromRequest);
+        }
+        catch (TokenException e) {
             if (e.getMessage().equals("Token expired")) {
-                if (jwtUtil.validateRefreshToken(refreshTokenService.getByUserEmail(email).getToken())) {
+                try {
+                    jwtUtil.refreshRefreshTokenErrorChecking(refreshTokenService.getByUserEmail(email).getToken());
                     accessTokenFromRequest = jwtUtil.generateAccessToken(email);
-                } else {
-                    // TODO: 22/06/2023 Handle exception
+                    Cookie cookie = new Cookie("accessToken", accessTokenFromRequest);
+                    cookie.setPath("/");
+                    cookie.setMaxAge(36000);
+                    response.addCookie(cookie);
                 }
+                catch (TokenException ex) {
+                    response.sendRedirect("/login");
+                    return;
+                }
+            }
+            else {
+                response.sendRedirect("/login");
+                return;
             }
         }
 
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
-            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(email, null, userDetails.getAuthorities());
+            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userService.getByEmail(email), null, userDetails.getAuthorities());
 
             auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(auth);

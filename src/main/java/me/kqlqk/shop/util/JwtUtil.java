@@ -44,8 +44,11 @@ public class JwtUtil {
 
         Date expiresIn = Date.from(LocalDateTime.now().plusMinutes(5).atZone(ZoneId.systemDefault()).toInstant());
 
+        Claims claims = Jwts.claims().setSubject(email);
+        claims.put("id", userService.getByEmail(email).getId());
+
         return Jwts.builder()
-                .setSubject(email)
+                .setClaims(claims)
                 .setExpiration(expiresIn)
                 .signWith(accessKey, SignatureAlgorithm.HS256)
                 .compact();
@@ -60,8 +63,11 @@ public class JwtUtil {
 
         Date expiresIn = Date.from(LocalDateTime.now().plusDays(30).atZone(ZoneId.systemDefault()).toInstant());
 
+        Claims claims = Jwts.claims().setSubject(email);
+        claims.put("id", user.getId());
+
         String token = Jwts.builder()
-                .setSubject(email)
+                .setClaims(claims)
                 .setExpiration(expiresIn)
                 .signWith(refreshKey, SignatureAlgorithm.HS256)
                 .compact();
@@ -70,7 +76,8 @@ public class JwtUtil {
         if (!refreshTokenService.existsByUserEmail(email)) {
             refreshToken = new RefreshToken(user, token);
             refreshTokenService.add(refreshToken);
-        } else {
+        }
+        else {
             refreshToken = refreshTokenService.getByUserEmail(email);
             refreshToken.setToken(token);
             refreshTokenService.update(refreshToken);
@@ -79,66 +86,136 @@ public class JwtUtil {
         return token;
     }
 
-    public boolean validateAccessToken(@NonNull String accessToken) {
-        return validateToken(accessToken);
+    public void accessTokenErrorChecking(@NonNull String accessToken) {
+        tokenErrorChecking(accessToken, accessKey);
     }
 
-    public boolean validateRefreshToken(@NonNull String refreshToken) {
-        return validateToken(refreshToken);
+    public void refreshRefreshTokenErrorChecking(@NonNull String refreshToken) {
+        tokenErrorChecking(refreshToken, refreshKey);
     }
 
-    private boolean validateToken(@NonNull String token) {
+    private void tokenErrorChecking(@NonNull String token, @NonNull Key key) {
         try {
-            String email = Jwts.parserBuilder()
-                    .setSigningKey(accessKey)
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token)
-                    .getBody()
-                    .getSubject();
+                    .getBody();
 
-            if (!userService.existsByEmail(email)) {
-                throw new UserNotFoundException("User with email = " + email + " not found");
+            if (!userService.existsByEmail(claims.getSubject())) {
+                throw new UserNotFoundException("User with email = " + claims.getSubject() + " not found");
             }
 
-            return true;
-        } catch (ExpiredJwtException expEx) {
+            if (!userService.existsById(((Integer) claims.get("id")).longValue())) {
+                throw new UserNotFoundException("User with id = " + ((Integer) claims.get("id")).longValue() + " not found");
+            }
+        }
+        catch (ExpiredJwtException expEx) {
             throw new TokenException("Token expired");
-        } catch (UnsupportedJwtException unsEx) {
+        }
+        catch (UnsupportedJwtException unsEx) {
             throw new TokenException("Token unsupported");
-        } catch (MalformedJwtException mjEx) {
+        }
+        catch (MalformedJwtException mjEx) {
             throw new TokenException("Token Malformed");
-        } catch (SignatureException sEx) {
+        }
+        catch (SignatureException sEx) {
             throw new TokenException("Signature invalid");
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new TokenException("Token invalid");
         }
     }
 
+    public boolean validateAccessToken(@NonNull String accessToken) {
+        return validateToken(accessToken, accessKey);
+    }
+
+    public boolean validateRefreshToken(@NonNull String refreshToken) {
+        return validateToken(refreshToken, refreshKey);
+    }
+
+    private boolean validateToken(@NonNull String token, @NonNull Key key) {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            return userService.existsByEmail(claims.getSubject()) &&
+                    userService.existsById(((Integer) claims.get("id")).longValue());
+        }
+        catch (Exception e) {
+            return false;
+        }
+    }
+
     public String getEmailFromAccessToken(String token) {
-        return getEmailFromToken(token);
+        return getEmailFromToken(token, accessKey);
     }
 
     public String getEmailFromRefreshToken(String token) {
-        return getEmailFromToken(token);
+        return getEmailFromToken(token, refreshKey);
     }
 
-    private String getEmailFromToken(String token) {
+    private String getEmailFromToken(@NonNull String token, @NonNull Key key) {
         try {
             return Jwts.parserBuilder()
-                    .setSigningKey(accessKey)
+                    .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token)
                     .getBody()
                     .getSubject();
-        } catch (ExpiredJwtException expEx) {
+        }
+        catch (ExpiredJwtException expEx) {
             return expEx.getClaims().getSubject();
-        } catch (UnsupportedJwtException unsEx) {
+        }
+        catch (UnsupportedJwtException unsEx) {
             throw new TokenException("Token unsupported");
-        } catch (MalformedJwtException mjEx) {
+        }
+        catch (MalformedJwtException mjEx) {
             throw new TokenException("Token Malformed");
-        } catch (SignatureException sEx) {
+        }
+        catch (SignatureException sEx) {
             throw new TokenException("Signature invalid");
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
+            throw new TokenException("Token invalid");
+        }
+    }
+
+    public long getIdFromAccessToken(String token) {
+        return getIdFromToken(token, accessKey);
+    }
+
+    public long getIdFromRefreshToken(String token) {
+        return getIdFromToken(token, refreshKey);
+    }
+
+    private long getIdFromToken(@NonNull String token, @NonNull Key key) {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            return ((Integer) claims.get("id")).longValue();
+        }
+        catch (ExpiredJwtException expEx) {
+            return (long) expEx.getClaims().get("id");
+        }
+        catch (UnsupportedJwtException unsEx) {
+            throw new TokenException("Token unsupported");
+        }
+        catch (MalformedJwtException mjEx) {
+            throw new TokenException("Token Malformed");
+        }
+        catch (SignatureException sEx) {
+            throw new TokenException("Signature invalid");
+        }
+        catch (Exception e) {
             throw new TokenException("Token invalid");
         }
     }
