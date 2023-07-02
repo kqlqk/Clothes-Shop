@@ -1,6 +1,7 @@
 package me.kqlqk.shop.security;
 
 import me.kqlqk.shop.exception.BadCredentialsException;
+import me.kqlqk.shop.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,13 +25,13 @@ public class CustomDaoAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        String email = (String) authentication.getPrincipal();
+        User user = (User) authentication.getPrincipal();
         String password = (String) authentication.getCredentials();
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
 
         if (passwordEncoder.matches(password, userDetails.getPassword())) {
-            return new UsernamePasswordAuthenticationToken(email, password, userDetails.getAuthorities());
+            return new UsernamePasswordAuthenticationToken(user, password, userDetails.getAuthorities());
         } else {
             throw new BadCredentialsException("Bad credentials");
         }

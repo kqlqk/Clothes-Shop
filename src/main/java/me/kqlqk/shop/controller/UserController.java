@@ -28,10 +28,9 @@ public class UserController {
 
     @GetMapping // TODO display email
     public String getUserPage(@PathVariable long id, Model model) {
-        String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userService.getByEmail(email);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (userService.getByEmail(email).getId() != id) {
+        if (userService.getByEmail(user.getEmail()).getId() != id) {
             // TODO: 24/06/2023 throw exception
             return null;
         }
