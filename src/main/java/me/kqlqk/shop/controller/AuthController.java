@@ -1,9 +1,9 @@
 package me.kqlqk.shop.controller;
 
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import me.kqlqk.shop.dto.LoginDTO;
+import me.kqlqk.shop.model.User;
 import me.kqlqk.shop.service.UserService;
 import me.kqlqk.shop.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,25 +36,23 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String logIn(@ModelAttribute(name = "loginDTO") LoginDTO loginDTO, HttpServletRequest request, HttpServletResponse response) {
+    public String logIn(@ModelAttribute(name = "loginDTO") LoginDTO loginDTO, HttpServletResponse response) {
         // TODO: 24/06/2023 Handle bad credentials
-        for (Cookie c : request.getCookies()) {
-            if (c.getName().equals("accessToken")) {
-                c.setValue("");
-            }
-        }
+        User user = userService.getByEmail(loginDTO.getEmail());
+        authManager.authenticate(new UsernamePasswordAuthenticationToken(user, loginDTO.getPassword()));
 
-        authManager.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword()));
-
-        String accessToken = jwtUtil.generateAccessToken(loginDTO.getEmail());
-
-        Cookie cookie = new Cookie("accessToken", accessToken);
+        Cookie cookie = new Cookie("accessToken", jwtUtil.generateAccessToken(loginDTO.getEmail()));
         cookie.setPath("/");
         cookie.setMaxAge(36000);
         response.addCookie(cookie);
 
+        Cookie cookie2 = new Cookie("userId", String.valueOf(user.getId()));
+        cookie2.setPath("/");
+        cookie2.setMaxAge(36000);
+        response.addCookie(cookie2);
+
         jwtUtil.generateAndSaveOrUpdateRefreshToken(loginDTO.getEmail());
 
-        return "redirect:/user/" + userService.getByEmail(loginDTO.getEmail()).getId();
+        return "redirect:/user/" + user.getId();
     }
 }
