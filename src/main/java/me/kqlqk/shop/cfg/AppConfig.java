@@ -1,8 +1,8 @@
 package me.kqlqk.shop.cfg;
 
+import me.kqlqk.shop.cfg.filter.JwtFilter;
 import me.kqlqk.shop.model.User;
 import me.kqlqk.shop.security.CustomDaoAuthenticationProvider;
-import me.kqlqk.shop.security.filter.JwtFilter;
 import me.kqlqk.shop.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -41,7 +41,7 @@ public class AppConfig {
         http
                 .csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/user/**`").authenticated()
+                .requestMatchers("/user/**").authenticated()
                 .anyRequest().permitAll()
                 .and()
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
