@@ -2,6 +2,7 @@ package me.kqlqk.shop.controller;
 
 import me.kqlqk.shop.ControllerTest;
 import me.kqlqk.shop.dto.LoginDTO;
+import me.kqlqk.shop.dto.RegistrationDTO;
 import me.kqlqk.shop.service.RefreshTokenService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -58,5 +59,32 @@ public class AuthControllerTest {
                 .andExpect(redirectedUrl("/user/1"));
 
         assertThat(refreshTokenService.getByUserEmail("email@email.com").getToken()).isNotEqualTo("token1");
+    }
+
+    @Test
+    public void getRegistrationPage_shouldReturnRegistrationPage() throws Exception {
+        mockMvc.perform(get("/registration"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(view().name("auth/RegistrationPage"))
+                .andExpect(model().attributeExists("registrationDTO"));
+    }
+
+    @Test
+    public void signUp_shouldSignUpUser() throws Exception {
+        when(authManager.authenticate(any())).thenReturn(new UsernamePasswordAuthenticationToken("email@email.com", "password1"));
+
+        ModelMap model = new ModelMap();
+        RegistrationDTO registrationDTO = new RegistrationDTO("email3@email.com", "name", "password1");
+        model.addAttribute("registrationDTO", registrationDTO);
+
+        mockMvc.perform(post("/registration")
+                        .flashAttrs(model))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection())
+                .andExpect(cookie().exists("accessToken"))
+                .andExpect(redirectedUrl("/user/3"));
+
+        assertThat(refreshTokenService.getByUserEmail("email3@email.com")).isNotNull();
     }
 }

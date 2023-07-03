@@ -3,6 +3,7 @@ package me.kqlqk.shop;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -15,5 +16,6 @@ import java.lang.annotation.Target;
 @SpringBootTest(classes = Main.class)
 @TestPropertySource("/application.properties")
 @AutoConfigureMockMvc
+@Sql(value = {"/AddData.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 public @interface ControllerTest {
 }

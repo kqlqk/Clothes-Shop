@@ -3,6 +3,7 @@ package me.kqlqk.shop.controller;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import me.kqlqk.shop.dto.LoginDTO;
+import me.kqlqk.shop.dto.RegistrationDTO;
 import me.kqlqk.shop.model.User;
 import me.kqlqk.shop.service.UserService;
 import me.kqlqk.shop.util.JwtUtil;
@@ -46,13 +47,34 @@ public class AuthController {
         cookie.setMaxAge(36000);
         response.addCookie(cookie);
 
-        Cookie cookie2 = new Cookie("userId", String.valueOf(user.getId()));
-        cookie2.setPath("/");
-        cookie2.setMaxAge(36000);
-        response.addCookie(cookie2);
-
         jwtUtil.generateAndSaveOrUpdateRefreshToken(loginDTO.getEmail());
 
         return "redirect:/user/" + user.getId();
+    }
+
+    @GetMapping("/registration")
+    public String getRegistrationPage(Model model) {
+        model.addAttribute("registrationDTO", new RegistrationDTO());
+
+        return "auth/RegistrationPage";
+    }
+
+    @PostMapping("/registration")
+    public String signUp(@ModelAttribute(name = "registrationDTO") RegistrationDTO registrationDTO, HttpServletResponse response) {
+        // TODO: 02/07/2023 Handle bad credentials
+        User user = new User();
+        user.setEmail(registrationDTO.getEmail());
+        user.setName(registrationDTO.getName());
+        user.setPassword(registrationDTO.getPassword());
+        userService.add(user);
+
+        Cookie cookie = new Cookie("accessToken", jwtUtil.generateAccessToken(user.getEmail()));
+        cookie.setPath("/");
+        cookie.setMaxAge(36000);
+        response.addCookie(cookie);
+
+        jwtUtil.generateAndSaveOrUpdateRefreshToken(registrationDTO.getEmail());
+
+        return "redirect:/user/" + userService.getByEmail(registrationDTO.getEmail()).getId();
     }
 }
