@@ -22,6 +22,11 @@ public class UserDTO {
         User user = new User();
         user.setName(name);
 
+        if (userDb.getAddress() == null) {
+            user.setAddress(Formatter.formatAddressToSave(country, city, street, home, flat, postalCode));
+            return user;
+        }
+
         String[] addressDb = userDb.getAddress().split(";");
 
         user.setAddress(Formatter.formatAddressToSave(

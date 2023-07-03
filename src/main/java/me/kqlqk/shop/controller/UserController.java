@@ -38,7 +38,6 @@ public class UserController {
         model.addAttribute("currentOrder",
                 user.getOrderHistory().stream().filter(e -> !e.isReleased()).collect(Collectors.toList()));
 
-
         List<OrderHistory> orderHistories = user.getOrderHistory().stream()
                 .filter(OrderHistory::isReleased)
                 .sorted((Comparator.comparing(OrderHistory::getDate)))
@@ -47,7 +46,7 @@ public class UserController {
         Map<Long, List<OrderHistory>> groupedHistories = orderHistories.stream()
                 .collect(Collectors.groupingBy(OrderHistory::getUuid));
 
-        model.addAttribute("address", Formatter.formatAddressToShow(user.getAddress()));
+        model.addAttribute("address", user.getAddress() == null ? null : Formatter.formatAddressToShow(user.getAddress()));
 
         model.addAttribute("previousOrders", groupedHistories.values());
         model.addAttribute("user", user);

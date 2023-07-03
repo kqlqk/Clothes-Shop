@@ -97,13 +97,19 @@
         <div id="show-address-section" style="display: none;">
             <h3>Address:</h3>
 
-            <div th:each="s : ${address.split(';')}">
-                <h4 th:text="${s}"></h4>
-            </div>
-            <br/>
+            <div th:if="${address != null}">
+                <div th:each="s : ${address.split(';')}">
+                    <h4 th:text="${s}"></h4>
+                </div>
+                <br/>
 
-            <a class="btn btn-outline-dark" href="#">Edit</a>
-            <a class="btn btn-outline-dark" href="#">Delete</a>
+                <a class="btn btn-outline-dark" href="#">Edit</a>
+                <a class="btn btn-outline-dark" href="#">Delete</a>
+            </div>
+
+            <div th:if="${address == null}">
+                <a class="btn btn-outline-dark" href="#">Add</a>
+            </div>
         </div>
 
         <div id="edit-user-page-section" style="display: none;">
