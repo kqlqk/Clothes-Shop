@@ -5,7 +5,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import me.kqlqk.shop.exception.RefreshTokenNotFoundException;
 import me.kqlqk.shop.exception.TokenException;
 import me.kqlqk.shop.service.RefreshTokenService;
 import me.kqlqk.shop.service.UserService;
@@ -25,6 +26,7 @@ import java.io.IOException;
 
 @Component
 @Order(1)
+@Slf4j
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
@@ -52,17 +54,47 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        String accessTokenFromRequest = getToken(request);
+        String accessTokenFromRequest;
+        try {
+            accessTokenFromRequest = getToken(request);
+        }
+        catch (TokenException e) {
+            log.warn("There is no token:", e);
+            response.sendRedirect("/login?error=unknown");
+            return;
+        }
+
         String email;
-        email = jwtUtil.getEmailFromAccessToken(accessTokenFromRequest); // TODO: 22/06/2023 Handle exceptions
+        try {
+            email = jwtUtil.getEmailFromAccessToken(accessTokenFromRequest);
+        }
+        catch (Exception e) {
+            log.error("Error in JwtFiler from ip: " + request.getRemoteAddr(), e);
+            response.sendRedirect("/login?error=unknown");
+            return;
+        }
 
         try {
             jwtUtil.accessTokenErrorChecking(accessTokenFromRequest);
+            log.info("Access token valid, token: " + accessTokenFromRequest + " User: " + email);
         }
         catch (TokenException e) {
             if (e.getMessage().equals("Token expired")) {
+                String refreshToken;
+
                 try {
-                    jwtUtil.refreshRefreshTokenErrorChecking(refreshTokenService.getByUserEmail(email).getToken());
+                    refreshToken = refreshTokenService.getByUserEmail(email).getToken();
+                }
+                catch (RefreshTokenNotFoundException ex) {
+                    log.warn("Refresh token not found" +
+                            " for user: " + email +
+                            " from ip: " + request.getRemoteAddr(), ex);
+                    response.sendRedirect("/login?error=unknown");
+                    return;
+                }
+
+                try {
+                    jwtUtil.refreshRefreshTokenErrorChecking(refreshToken);
                     accessTokenFromRequest = jwtUtil.generateAccessToken(email);
                     Cookie cookie = new Cookie("accessToken", accessTokenFromRequest);
                     cookie.setPath("/");
@@ -70,12 +102,19 @@ public class JwtFilter extends OncePerRequestFilter {
                     response.addCookie(cookie);
                 }
                 catch (TokenException ex) {
-                    response.sendRedirect("/login");
+                    log.warn("Refresh token invalid, token: " + refreshToken +
+                            " for user: " + email +
+                            " from ip: " + request.getRemoteAddr(), ex);
+                    response.sendRedirect("/login?error=unknown");
                     return;
                 }
+
             }
             else {
-                response.sendRedirect("/login");
+                log.warn("Access token invalid, token: " + accessTokenFromRequest +
+                        " for user: " + email +
+                        " from ip: " + request.getRemoteAddr(), e);
+                response.sendRedirect("/login?error=unknown");
                 return;
             }
         }
@@ -87,18 +126,22 @@ public class JwtFilter extends OncePerRequestFilter {
 
             auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(auth);
+
+            log.info("Was set the auth for user: " + email);
         }
 
         filterChain.doFilter(request, response);
     }
 
-    private String getToken(@NonNull HttpServletRequest request) {
-        for (Cookie c : request.getCookies()) {
-            if (c.getName().equals("accessToken")) {
-                return c.getValue();
+    private String getToken(HttpServletRequest request) {
+        if (request.getCookies() != null) {
+            for (Cookie c : request.getCookies()) {
+                if (c.getName().equals("accessToken")) {
+                    return c.getValue();
+                }
             }
         }
 
-        return null; // TODO: 24/06/2023 Throw exception
+        throw new TokenException("There is no token in cookie or cookie");
     }
 }
