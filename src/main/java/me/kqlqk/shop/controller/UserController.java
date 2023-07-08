@@ -30,7 +30,7 @@ public class UserController {
     public String getUserPage(@PathVariable long id, Model model) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if (userService.getByEmail(user.getEmail()).getId() != id) {
+        if (user.getId() != id) {
             // TODO: 24/06/2023 throw exception
             return null;
         }
