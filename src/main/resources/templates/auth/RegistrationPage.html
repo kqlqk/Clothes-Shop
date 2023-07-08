@@ -13,19 +13,35 @@
 <header th:insert="~{Header}"></header>
 
 <div class="row justify-content-center main-content mtb-20px">
+    <div th:if="${errorParam != null && errorParam.equals('unknown')}"
+         th:text="'Something went wrong, try sign up one more time'" style="color: red"></div>
     <form th:method="post" th:action="@{/registration}" th:object="${registrationDTO}">
         <label class="form-label" for="email">Email</label>
         <input class="form-control" type="text" th:field="*{email}" id="email" placeholder="john123@mail.com"/>
+        <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red"></div>
+        <div th:if="${errorParam != null && errorParam.equals('userExists')}" th:text="'This email already registered'"
+             style="color: red"></div>
         <br>
 
-        <label class="form-label" for="Name">Name</label>
-        <input class="form-control" type="text" th:field="*{name}" id="Name" placeholder="John"/>
+        <label class="form-label" for="name">Name</label>
+        <input class="form-control" type="text" th:field="*{name}" id="name" placeholder="John"/>
+        <div th:if="${#fields.hasErrors('name')}" style="color: red">
+            Name should be:<br>
+            1. between 2 and 50 characters <br>
+            2. contains only letters<br>
+        </div>
         <br>
 
         <label class="form-label" for="password">Password</label>
         <input class="form-control" type="text" th:field="*{password}" id="password" placeholder="Password123"/>
-        <div style="margin-bottom: 10%;"></div>
+        <div th:if="${#fields.hasErrors('password')}" style="color: red">
+            Password should be: <br>
+            1. between 8 and 50 characters <br>
+            2. minimum 1 number <br>
+            3. both lower and uppercase letters
+        </div>
 
+        <div style="margin-bottom: 10%;"></div>
         <button style="width: 100%" class="btn btn-outline-dark btn-lg" type="submit">Sign up</button>
     </form>
 
