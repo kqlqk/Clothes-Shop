@@ -31,7 +31,7 @@ public class User {
     private String password; // TODO: 22/06/2023 Change to char[]
 
     @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "customer_id")
     private List<OrderHistory> orderHistory;
 
 

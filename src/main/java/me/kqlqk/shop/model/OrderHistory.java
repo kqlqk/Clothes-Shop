@@ -21,11 +21,11 @@ public class OrderHistory {
     private long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "customer_id")
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "order_id") // TODO change to customer_id
+    @JoinColumn(name = "order_id")
     private Order order;
 
     @Temporal(TemporalType.TIMESTAMP)

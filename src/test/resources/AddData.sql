@@ -83,10 +83,10 @@ insert into buying_order (product_id, size_id, color_id)
 values (2, 2, 2);
 
 
-insert into order_history (user_id, order_id, order_date, uuid, released)
+insert into order_history (customer_id, order_id, order_date, uuid, released)
 values (1, 1, '2023-05-19 10:13:54', 1, true);
 
-insert into order_history (user_id, order_id, order_date, uuid, released)
+insert into order_history (customer_id, order_id, order_date, uuid, released)
 values (2, 2, '2023-01-19 10:23:54', 2, false);
 
 
