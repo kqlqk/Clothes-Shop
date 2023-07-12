@@ -1,6 +1,7 @@
 package me.kqlqk.shop.util;
 
 import jakarta.servlet.http.Cookie;
+import lombok.extern.slf4j.Slf4j;
 import me.kqlqk.shop.dto.ProductBuyingDTO;
 import me.kqlqk.shop.model.enums.Colors;
 import me.kqlqk.shop.model.enums.Sizes;
@@ -10,14 +11,15 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+@Slf4j
 public class CookieUtil {
     public static final String OBJECT_DELIMITER = ".";
     public static final String VALUES_DELIMITER = "/";
 
 
-    public static boolean containsProductBuyingDTO(Cookie cookie) { // TODO add @NonNUll
+    public static boolean containsProductBuyingDTO(Cookie cookie) {
         if (cookie == null || cookie.getValue() == null) {
-            return false; // TODO throw exception
+            return false;
         }
 
         return cookie.getValue().matches("\\d+" + VALUES_DELIMITER +
@@ -32,7 +34,7 @@ public class CookieUtil {
 
     public static int getLastIdFromProductBuyingDTOs(Cookie cookie) {
         if (!containsProductBuyingDTO(cookie)) {
-            return -1; // TODO throw exception
+            return 0;
         }
 
         List<ProductBuyingDTO> productBuyingDTOs = getProductBuyingDTOs(cookie);
@@ -66,7 +68,8 @@ public class CookieUtil {
 
     public static void deleteProductBuyingDTO(Cookie cookie, ProductBuyingDTO productBuyingDTO) {
         if (!containsProductBuyingDTO(cookie)) {
-            return; // TODO throw exception
+            log.info("Cookie was not delete, because there is no cookie with that productBuyingDTO");
+            return;
         }
 
         String value = cookie.getValue();
