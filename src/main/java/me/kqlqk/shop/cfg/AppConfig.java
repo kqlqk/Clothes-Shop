@@ -57,7 +57,7 @@ public class AppConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> {
-            User userDB = userService.getByEmail(username); // TODO: 25/06/2023 Handle exception
+            User userDB = userService.getByEmail(username);
 
             return new org.springframework.security.core.userdetails.User(
                     userDB.getEmail(),

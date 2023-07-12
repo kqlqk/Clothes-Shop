@@ -40,7 +40,7 @@ public class AuthController {
     @GetMapping("/login")
     public String getLoginPage(Model model, @RequestParam(value = "error", required = false) String errorParam) {
         model.addAttribute("loginDTO", new LoginDTO());
-        model.addAttribute("errorParam", errorParam);
+        model.addAttribute("errorParam", errorParam); // TODO: 12/07/2023 create enum for errorParam's statements
 
         return "auth/LoginPage";
     }

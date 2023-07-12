@@ -27,7 +27,7 @@
     <div class="right-side">
 
         <div id="current-order-section" style="display: none;">
-            <h3>Current Order:</h3>
+            <h3>Current Order</h3>
 
             <div th:if="${!currentOrder.isEmpty()}">
                 <h5 th:text="${'Order num. ' + currentOrder.get(0).getUuid() + ', ' + currentOrder.get(0).getDate()}"></h5>
@@ -59,7 +59,7 @@
         </div>
 
         <div id="previous-orders-section" style="display: none;">
-            <h3>History of orders:</h3>
+            <h3>History of orders</h3>
 
             <div th:if="${!previousOrders.isEmpty()}">
                 <div th:each="orderHistoryGroup : ${previousOrders}">
@@ -95,7 +95,7 @@
         </div>
 
         <div id="show-address-section" style="display: none;">
-            <h3>Address:</h3>
+            <h3>Address</h3>
 
             <div th:if="${address != null}">
                 <div th:each="s : ${address.split(';')}">
