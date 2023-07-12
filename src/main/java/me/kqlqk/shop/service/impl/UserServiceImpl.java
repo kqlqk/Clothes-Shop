@@ -71,10 +71,6 @@ public class UserServiceImpl implements UserService {
             user.setName(userDb.getName());
         }
 
-        if (user.getPassword() == null || user.getPassword().isBlank()) {
-            user.setPassword(userDb.getPassword());
-        }
-
         if (user.getAddress() == null || user.getAddress().isBlank()) {
             user.setAddress(userDb.getAddress());
         }
@@ -83,7 +79,12 @@ public class UserServiceImpl implements UserService {
             user.setOrderHistory(userDb.getOrderHistory());
         }
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (user.getPassword() == null || user.getPassword().isBlank()) {
+            user.setPassword(userDb.getPassword());
+        }
+        else {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
 
         userRepository.save(user);
     }

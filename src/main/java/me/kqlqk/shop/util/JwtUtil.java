@@ -86,6 +86,27 @@ public class JwtUtil {
         return token;
     }
 
+    public String updateRefreshTokenWithNewEmail(@NonNull String newEmail) {
+        User user = userService.getByEmail(newEmail);
+
+        Date expiresIn = Date.from(LocalDateTime.now().plusDays(30).atZone(ZoneId.systemDefault()).toInstant());
+
+        Claims claims = Jwts.claims().setSubject(newEmail);
+        claims.put("id", user.getId());
+
+        String token = Jwts.builder()
+                .setClaims(claims)
+                .setExpiration(expiresIn)
+                .signWith(refreshKey, SignatureAlgorithm.HS256)
+                .compact();
+
+        RefreshToken refreshToken = refreshTokenService.getByUserEmail(newEmail);
+        refreshToken.setToken(token);
+        refreshTokenService.update(refreshToken);
+
+        return token;
+    }
+
     public void accessTokenErrorChecking(@NonNull String accessToken) {
         tokenErrorChecking(accessToken, accessKey);
     }
@@ -123,7 +144,7 @@ public class JwtUtil {
             throw new TokenException("Signature invalid");
         }
         catch (Exception e) {
-            throw new TokenException("Token invalid");
+            throw new TokenException("Token invalid"); // TODO: 09/07/2023 throw nested ex
         }
     }
 
