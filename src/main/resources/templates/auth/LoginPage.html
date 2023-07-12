@@ -18,7 +18,9 @@
         <div th:if="${errorParam != null && errorParam.equals('badCredentials')}" th:text="'Bad credentials'"
              style="color: red"></div>
         <div th:if="${errorParam != null && errorParam.equals('unknown')}"
-             th:text="'Something went wrong, try sign in one more time'" style="color: red"></div>
+             th:text="'Try sign in one more time'" style="color: red"></div>
+        <div th:if="${errorParam != null && errorParam.equals('shouldLogin')}"
+             th:text="'You should sign in'" style="color: red"></div>
         <label class="form-label" for="email">Email</label>
         <input class="form-control" type="text" th:field="*{email}" id="email" placeholder="john123@mail.com"/>
         <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red"></div>
