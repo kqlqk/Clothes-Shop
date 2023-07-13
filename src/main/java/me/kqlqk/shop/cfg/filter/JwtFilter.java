@@ -12,6 +12,7 @@ import me.kqlqk.shop.model.User;
 import me.kqlqk.shop.service.RefreshTokenService;
 import me.kqlqk.shop.service.UserService;
 import me.kqlqk.shop.util.JwtUtil;
+import me.kqlqk.shop.util.LoginErrorParam;
 import org.junit.jupiter.api.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -62,7 +63,7 @@ public class JwtFilter extends OncePerRequestFilter {
         }
         catch (TokenException e) {
             log.warn("There is no token:", e);
-            response.sendRedirect("/login?error=shouldLogin");
+            response.sendRedirect("/login?error=" + LoginErrorParam.SHOULD_LOGIN);
             return;
         }
 
@@ -74,7 +75,7 @@ public class JwtFilter extends OncePerRequestFilter {
         }
         catch (Exception e) {
             log.error("Error in JwtFiler from ip: " + request.getRemoteAddr(), e);
-            response.sendRedirect("/login?error=unknown");
+            response.sendRedirect("/login?error=" + LoginErrorParam.UNKNOWN);
             return;
         }
 
@@ -107,14 +108,14 @@ public class JwtFilter extends OncePerRequestFilter {
                     log.warn("Refresh token not found" +
                             " for user: " + email +
                             " from ip: " + request.getRemoteAddr(), ex);
-                    response.sendRedirect("/login?error=unknown");
+                    response.sendRedirect("/login?error=" + LoginErrorParam.UNKNOWN);
                     return;
                 }
                 catch (TokenException ex) {
                     log.warn("Refresh token invalid, token: " + refreshToken +
                             " for user: " + email +
                             " from ip: " + request.getRemoteAddr(), ex);
-                    response.sendRedirect("/login?error=unknown");
+                    response.sendRedirect("/login?error=" + LoginErrorParam.UNKNOWN);
                     return;
                 }
 
@@ -123,7 +124,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 log.warn("Access token invalid, token: " + accessTokenFromRequest +
                         " for user: " + email +
                         " from ip: " + request.getRemoteAddr(), e);
-                response.sendRedirect("/login?error=unknown");
+                response.sendRedirect("/login?error=" + LoginErrorParam.UNKNOWN);
                 return;
             }
         }

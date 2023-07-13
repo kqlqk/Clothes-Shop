@@ -15,11 +15,11 @@
 <div class="row justify-content-center main-content mtb-20px">
     <form th:method="post" th:action="@{/login}" th:object="${loginDTO}">
 
-        <div th:if="${errorParam != null && errorParam.equals('badCredentials')}" th:text="'Bad credentials'"
+        <div th:if="${errorParam != null && errorParam.equals('BAD_CREDENTIALS')}" th:text="'Bad credentials'"
              style="color: red"></div>
-        <div th:if="${errorParam != null && errorParam.equals('unknown')}"
+        <div th:if="${errorParam != null && errorParam.equals('UNKNOWN')}"
              th:text="'Try sign in one more time'" style="color: red"></div>
-        <div th:if="${errorParam != null && errorParam.equals('shouldLogin')}"
+        <div th:if="${errorParam != null && errorParam.equals('SHOULD_LOGIN')}"
              th:text="'You should sign in'" style="color: red"></div>
         <label class="form-label" for="email">Email</label>
         <input class="form-control" type="text" th:field="*{email}" id="email" placeholder="john123@mail.com"/>

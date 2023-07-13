@@ -13,13 +13,13 @@
 <header th:insert="~{Header}"></header>
 
 <div class="row justify-content-center main-content mtb-20px">
-    <div th:if="${errorParam != null && errorParam.equals('unknown')}"
-         th:text="'Something went wrong, try sign up one more time'" style="color: red"></div>
+    <div th:if="${errorParam != null && errorParam.equals('UNKNOWN')}"
+         th:text="'Try sign up one more time'" style="color: red"></div>
     <form th:method="post" th:action="@{/registration}" th:object="${registrationDTO}">
         <label class="form-label" for="email">Email</label>
         <input class="form-control" type="text" th:field="*{email}" id="email" placeholder="john123@mail.com"/>
         <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red"></div>
-        <div th:if="${errorParam != null && errorParam.equals('userExists')}" th:text="'This email already registered'"
+        <div th:if="${errorParam != null && errorParam.equals('USER_EXISTS')}" th:text="'This email already registered'"
              style="color: red"></div>
         <br>
 

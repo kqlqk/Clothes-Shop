@@ -12,6 +12,8 @@ import me.kqlqk.shop.exception.UserNotFoundException;
 import me.kqlqk.shop.model.User;
 import me.kqlqk.shop.service.UserService;
 import me.kqlqk.shop.util.JwtUtil;
+import me.kqlqk.shop.util.LoginErrorParam;
+import me.kqlqk.shop.util.RegistrationErrorParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -40,7 +42,7 @@ public class AuthController {
     @GetMapping("/login")
     public String getLoginPage(Model model, @RequestParam(value = "error", required = false) String errorParam) {
         model.addAttribute("loginDTO", new LoginDTO());
-        model.addAttribute("errorParam", errorParam); // TODO: 12/07/2023 create enum for errorParam's statements
+        model.addAttribute("errorParam", errorParam);
 
         return "auth/LoginPage";
     }
@@ -61,11 +63,11 @@ public class AuthController {
         catch (RuntimeException e) {
             if (e instanceof BadCredentialsException || e instanceof UserNotFoundException) {
                 log.info("Bad credentials for user ", e);
-                return "redirect:/login?error=badCredentials";
+                return "redirect:/login?error=" + LoginErrorParam.BAD_CREDENTIALS;
             }
             else {
                 log.warn("Something went wrong while login ", e);
-                return "redirect:/login?error=unknown";
+                return "redirect:/login?error=" + LoginErrorParam.UNKNOWN;
             }
         }
 
@@ -106,11 +108,11 @@ public class AuthController {
         catch (RuntimeException e) {
             if (e instanceof UserExistsException) {
                 log.info("User already exists", e);
-                return "redirect:/registration?error=userExists";
+                return "redirect:/registration?error=" + RegistrationErrorParam.USER_EXISTS;
             }
             else {
                 log.warn("Something went wrong while registration ", e);
-                return "redirect:/registration?error=unknown";
+                return "redirect:/registration?error=" + RegistrationErrorParam.UNKNOWN;
             }
         }
 
