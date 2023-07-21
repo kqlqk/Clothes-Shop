@@ -33,7 +33,7 @@ public class CookieUtilTest {
 
         assertThat(CookieUtil.getLastIdFromProductBuyingDTOs(cookie)).isEqualTo(3);
 
-        assertThat(CookieUtil.getLastIdFromProductBuyingDTOs(null)).isEqualTo(-1);
+        assertThat(CookieUtil.getLastIdFromProductBuyingDTOs(null)).isEqualTo(0);
     }
 
     @Test
@@ -49,6 +49,10 @@ public class CookieUtilTest {
         assertThat(productBuyingDTOs.get(0).getColor()).isEqualTo(Colors.BLACK);
         assertThat(productBuyingDTOs.get(0).getSize()).isEqualTo(Sizes.L);
 
+
+        cookie.setValue("a");
+
+        assertThat(CookieUtil.getProductBuyingDTOs(cookie)).asList().isEmpty();
     }
 
     @Test
