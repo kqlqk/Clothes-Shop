@@ -87,6 +87,10 @@ public class JwtUtil {
     }
 
     public String updateRefreshTokenWithNewEmail(@NonNull String newEmail) {
+        if (!userService.existsByEmail(newEmail)) {
+            throw new UserNotFoundException("User with email = " + newEmail + " not found");
+        }
+
         User user = userService.getByEmail(newEmail);
 
         Date expiresIn = Date.from(LocalDateTime.now().plusDays(30).atZone(ZoneId.systemDefault()).toInstant());

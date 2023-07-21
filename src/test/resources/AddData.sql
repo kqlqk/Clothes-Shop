@@ -70,10 +70,10 @@ values (2, 2);
 
 
 insert into customer (name, password, address, email)
-values ('test1', 'password1', 'test2', 'email@email.com');
+values ('test1', 'Password1', 'test2', 'email@email.com');
 
 insert into customer (name, password, address, email)
-values ('test3', 'password2', 'test4', 'email2@email.com');
+values ('test3', 'Password2', 'test4', 'email2@email.com');
 
 
 insert into buying_order (product_id, size_id, color_id)
