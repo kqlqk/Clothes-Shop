@@ -35,7 +35,7 @@ public class ProductServiceImpl implements ProductService {
     public List<Product> getAll() {
         List<Product> products = productRepository.findAll();
 
-        if (products == null || products.isEmpty()) {
+        if (products.isEmpty()) {
             throw new ProductNotFoundException("Products not found");
         }
 
@@ -50,6 +50,9 @@ public class ProductServiceImpl implements ProductService {
         if (productRepository.existsByName(product.getName())) {
             throw new ProductExistsException("Product with name = " + product.getName() + " exists");
         }
+        if (productRepository.existsByPath(product.getPath())) {
+            throw new ProductExistsException("Product with path = " + product.getPath() + " exists");
+        }
 
         productRepository.save(product);
     }
@@ -59,7 +62,7 @@ public class ProductServiceImpl implements ProductService {
         if (!productRepository.existsById(product.getId())) {
             throw new ProductNotFoundException("Product with id = " + product.getId() + " not found");
         }
-
+        // TODO: 22/07/2023 add checking like in userServiceImpl
         productRepository.save(product);
     }
 }

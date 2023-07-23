@@ -1,7 +1,7 @@
 package me.kqlqk.shop.controller;
 
 import me.kqlqk.shop.ControllerTest;
-import me.kqlqk.shop.model.Product;
+import me.kqlqk.shop.model.product.Product;
 import me.kqlqk.shop.service.ProductService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

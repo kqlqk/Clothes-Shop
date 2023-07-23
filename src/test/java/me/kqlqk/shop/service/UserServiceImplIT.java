@@ -25,7 +25,7 @@ public class UserServiceImplIT {
     public void add_shouldAddUserToDB() {
         int oldSize = userRepository.findAll().size();
 
-        User user = new User("test@test.com", "password", "test", "test2", null);
+        User user = new User("test@test.com", "user", "Password1", null);
 
         userService.add(user);
 
@@ -38,19 +38,24 @@ public class UserServiceImplIT {
     public void add_shouldThrowException() {
         User user = userService.getById(1);
         user.setName("new name");
+        user.setAddress(null);
 
-        User finalUser1 = user;
-        assertThrows(UserExistsException.class, () -> userService.add(finalUser1));
+        User userExistedById = user;
+        assertThrows(UserExistsException.class, () -> userService.add(userExistedById));
 
-        user = new User("email@email.com", "password", "a", "b", null);
-        User finalUser2 = user;
-        assertThrows(UserExistsException.class, () -> userService.add(finalUser2));
+        user = new User("email@email.com", "aaa", "password", null);
+        User userExistedByEmail = user;
+        assertThrows(UserExistsException.class, () -> userService.add(userExistedByEmail));
+
+        user = new User("new@email.com", "aaa", "password", userService.getById(1).getAddress());
+        User userExistedByAddress = user;
+        assertThrows(UserExistsException.class, () -> userService.add(userExistedByAddress));
     }
 
     @Test
     public void update_shouldUpdateUserInDB() {
         User user = userService.getById(1);
-        user.setAddress("new address");
+        user.setAddress(new Address("USA", "Chicago", "Chicago avenue", "1/3"));
 
         userService.update(user);
 
@@ -59,13 +64,19 @@ public class UserServiceImplIT {
 
     @Test
     public void update_shouldThrowException() {
-        User user = new User("test@test.com", "password", "test1", "test2", null);
-        User finalUser1 = user;
-        assertThrows(UserNotFoundException.class, () -> userService.update(finalUser1));
+        User user = new User("new@email.com", "a", "Password1", null);
+        user.setId(99);
+        User userWithExistedId = user;
+        assertThrows(UserNotFoundException.class, () -> userService.update(userWithExistedId));
 
         user = userService.getById(1);
         user.setEmail("email2@email.com");
-        User finalUser2 = user;
-        assertThrows(UserExistsException.class, () -> userService.update(finalUser2));
+        User userWithExistedEmail = user;
+        assertThrows(UserExistsException.class, () -> userService.update(userWithExistedEmail));
+
+        user = userService.getById(1);
+        user.setAddress(userService.getById(2).getAddress());
+        User userWithExistedAddress = user;
+        assertThrows(UserExistsException.class, () -> userService.update(userWithExistedAddress));
     }
 }

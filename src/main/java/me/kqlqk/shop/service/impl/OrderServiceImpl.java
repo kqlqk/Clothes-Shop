@@ -37,6 +37,7 @@ public class OrderServiceImpl implements OrderService {
         if (!orderRepository.existsById(order.getId())) {
             throw new OrderNotFoundException("Order with id = " + order.getId() + " not found");
         }
+        // TODO: 22/07/2023 add checking like in userServiceImpl
 
         orderRepository.save(order);
     }

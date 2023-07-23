@@ -3,14 +3,15 @@ package me.kqlqk.shop.service;
 import me.kqlqk.shop.ServiceTest;
 import me.kqlqk.shop.exception.OrderExistsException;
 import me.kqlqk.shop.exception.OrderNotFoundException;
-import me.kqlqk.shop.model.Color;
 import me.kqlqk.shop.model.Order;
-import me.kqlqk.shop.model.Product;
-import me.kqlqk.shop.model.Size;
+import me.kqlqk.shop.model.product.Product;
 import me.kqlqk.shop.repository.OrderRepository;
 import me.kqlqk.shop.service.impl.OrderServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -26,21 +27,21 @@ public class OrderServiceImplIT {
     @Autowired
     private ProductService productService;
 
-    @Autowired
-    private ColorService colorService;
-
-    @Autowired
-    private SizeService sizeService;
-
     @Test
+    @Transactional
     public void add_shouldAddUserToDB() {
         int oldSize = orderRepository.findAll().size();
 
-        Color color = colorService.getById(1);
-        Size size = sizeService.getById(1);
         Product product = productService.getById(1);
 
-        Order order = new Order(color, size, product);
+        Order order = new Order(product.getColors().get(0),
+                product.getSizes().get(0),
+                product,
+                null,
+                LocalDateTime.now(),
+                null,
+                1,
+                false);
 
         orderService.add(order);
 
@@ -51,26 +52,37 @@ public class OrderServiceImplIT {
 
     @Test
     public void add_shouldThrowException() {
-        Order order = orderRepository.findById(1l).get();
-
+        Order order = orderService.getById(1);
         assertThrows(OrderExistsException.class, () -> orderService.add(order));
     }
 
     @Test
+    @Transactional
     public void update_shouldUpdateUserInDB() {
-        Color color = colorService.getById(2);
-        Order order = orderRepository.findById(1l).get();
-        order.setColor(color);
-
+        Order order = orderService.getById(1);
+        order.setColor(productService.getById(1).getColors().get(1));
 
         orderService.update(order);
 
-        assertThat(orderRepository.findById(1l).get().getColor().getName()).isEqualTo(order.getColor().getName());
+        assertThat(orderService.getById(1).getColor().getName()).isEqualTo(order.getColor().getName());
     }
 
     @Test
+    @Transactional
     public void update_shouldThrowException() {
-        Order order = new Order(null, null, null);
+        Product product = productService.getById(1);
+
+        Order order = new Order(product.getColors().get(0),
+                product.getSizes().get(0),
+                product,
+                null,
+                LocalDateTime.now(),
+                null,
+                1,
+                false);
+        order.setId(99);
+
+
         assertThrows(OrderNotFoundException.class, () -> orderService.update(order));
     }
 }

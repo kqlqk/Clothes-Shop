@@ -32,13 +32,18 @@ public class ProductServiceImplIT {
         int oldSize = productRepository.findAll().size();
 
         List<Color> colors = new ArrayList<>();
-        colors.add(new Color(Colors.GRAY));
-
         List<Size> sizes = new ArrayList<>();
-        sizes.add(new Size(Sizes.XS));
 
         Product product = new Product(
                 "Black oversize t-shirt", 10, 0, "...", colors, sizes, "/tshirts/3");
+
+        Size size = new Size(Sizes.XS);
+        size.setProduct(product);
+        sizes.add(size);
+
+        Color color = new Color(Colors.WHITE);
+        color.setProduct(product);
+        colors.add(color);
 
         productService.add(product);
 
@@ -51,13 +56,21 @@ public class ProductServiceImplIT {
     public void add_shouldThrowException() {
         Product product = productService.getById(1);
         product.setName("new name");
-        Product finalProduct1 = product;
-        assertThrows(ProductExistsException.class, () -> productService.add(finalProduct1));
+        product.setPath("/new/path");
+        Product productExistedById = product;
+        assertThrows(ProductExistsException.class, () -> productService.add(productExistedById));
 
         product = productService.getById(1);
-        product.setId(99);
-        Product finalProduct2 = product;
-        assertThrows(ProductExistsException.class, () -> productService.add(finalProduct2));
+        product.setId(0);
+        product.setPath("/new/path");
+        Product productExistedByName = product;
+        assertThrows(ProductExistsException.class, () -> productService.add(productExistedByName));
+
+        product = productService.getById(1);
+        product.setId(0);
+        product.setName("newName");
+        Product productExistedByPath = product;
+        assertThrows(ProductExistsException.class, () -> productService.add(productExistedByPath));
     }
 
     @Test
