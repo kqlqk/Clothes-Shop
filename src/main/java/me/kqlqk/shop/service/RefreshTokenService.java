@@ -1,6 +1,6 @@
 package me.kqlqk.shop.service;
 
-import me.kqlqk.shop.model.RefreshToken;
+import me.kqlqk.shop.model.user.RefreshToken;
 import org.springframework.stereotype.Service;
 
 @Service

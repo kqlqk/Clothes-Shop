@@ -3,7 +3,7 @@ package me.kqlqk.shop.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import me.kqlqk.shop.model.Product;
+import me.kqlqk.shop.model.product.Product;
 
 @Data
 @AllArgsConstructor

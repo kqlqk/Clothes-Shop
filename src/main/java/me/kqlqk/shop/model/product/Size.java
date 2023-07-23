@@ -1,12 +1,10 @@
-package me.kqlqk.shop.model;
+package me.kqlqk.shop.model.product;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import me.kqlqk.shop.model.enums.Sizes;
-
-import java.util.List;
 
 @Entity
 @Table(name = "size")
@@ -20,13 +18,19 @@ public class Size {
     private long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "name", nullable = false, length = 100, unique = true)
+    @Column(name = "size", nullable = false, length = 100, unique = true)
     private Sizes name;
 
-    @ManyToMany(mappedBy = "sizes")
-    private List<Product> products;
+    @ManyToOne
+    @JoinColumn(name = "product_id", referencedColumnName = "id")
+    private Product product;
 
     public Size(Sizes name) {
         this.name = name;
+    }
+
+    public Size(Sizes name, Product product) {
+        this.name = name;
+        this.product = product;
     }
 }

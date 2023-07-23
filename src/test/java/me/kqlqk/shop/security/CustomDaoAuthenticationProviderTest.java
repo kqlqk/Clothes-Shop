@@ -1,7 +1,7 @@
 package me.kqlqk.shop.security;
 
 import me.kqlqk.shop.exception.BadCredentialsException;
-import me.kqlqk.shop.model.User;
+import me.kqlqk.shop.model.user.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

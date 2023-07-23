@@ -1,6 +1,6 @@
 package me.kqlqk.shop.service;
 
-import me.kqlqk.shop.model.User;
+import me.kqlqk.shop.model.user.User;
 import org.springframework.stereotype.Service;
 
 @Service

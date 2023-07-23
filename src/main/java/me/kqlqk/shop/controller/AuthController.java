@@ -9,7 +9,7 @@ import me.kqlqk.shop.dto.RegistrationDTO;
 import me.kqlqk.shop.exception.BadCredentialsException;
 import me.kqlqk.shop.exception.UserExistsException;
 import me.kqlqk.shop.exception.UserNotFoundException;
-import me.kqlqk.shop.model.User;
+import me.kqlqk.shop.model.user.User;
 import me.kqlqk.shop.service.UserService;
 import me.kqlqk.shop.util.JwtUtil;
 import me.kqlqk.shop.util.LoginErrorParam;

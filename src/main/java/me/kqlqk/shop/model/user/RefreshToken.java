@@ -1,4 +1,4 @@
-package me.kqlqk.shop.model;
+package me.kqlqk.shop.model.user;
 
 import jakarta.persistence.*;
 import lombok.Getter;

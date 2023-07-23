@@ -1,6 +1,7 @@
 package me.kqlqk.shop.repository;
 
-import me.kqlqk.shop.model.User;
+import me.kqlqk.shop.model.user.Address;
+import me.kqlqk.shop.model.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

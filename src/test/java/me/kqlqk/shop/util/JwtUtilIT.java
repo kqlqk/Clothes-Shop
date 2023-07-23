@@ -3,7 +3,7 @@ package me.kqlqk.shop.util;
 import me.kqlqk.shop.ServiceTest;
 import me.kqlqk.shop.exception.TokenException;
 import me.kqlqk.shop.exception.UserNotFoundException;
-import me.kqlqk.shop.model.User;
+import me.kqlqk.shop.model.user.User;
 import me.kqlqk.shop.service.RefreshTokenService;
 import me.kqlqk.shop.service.UserService;
 import org.junit.jupiter.api.Test;

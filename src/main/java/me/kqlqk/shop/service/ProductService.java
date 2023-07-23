@@ -1,6 +1,6 @@
 package me.kqlqk.shop.service;
 
-import me.kqlqk.shop.model.Product;
+import me.kqlqk.shop.model.product.Product;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

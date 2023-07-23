@@ -1,7 +1,7 @@
 package me.kqlqk.shop.cfg;
 
 import me.kqlqk.shop.cfg.filter.JwtFilter;
-import me.kqlqk.shop.model.User;
+import me.kqlqk.shop.model.user.User;
 import me.kqlqk.shop.security.CustomDaoAuthenticationProvider;
 import me.kqlqk.shop.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

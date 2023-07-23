@@ -1,4 +1,4 @@
-package me.kqlqk.shop.model;
+package me.kqlqk.shop.model.product;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -30,16 +30,12 @@ public class Product {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "product_color",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "color_id"))
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "product_id", referencedColumnName = "id")
     private List<Color> colors;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "product_size",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "size_id"))
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "product_id", referencedColumnName = "id")
     private List<Size> sizes;
 
     @Column(name = "path", nullable = false, length = 100)

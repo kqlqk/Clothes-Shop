@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import me.kqlqk.shop.exception.RefreshTokenNotFoundException;
 import me.kqlqk.shop.exception.TokenException;
-import me.kqlqk.shop.model.User;
+import me.kqlqk.shop.model.user.User;
 import me.kqlqk.shop.service.RefreshTokenService;
 import me.kqlqk.shop.service.UserService;
 import me.kqlqk.shop.util.JwtUtil;

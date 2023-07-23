@@ -3,7 +3,7 @@ package me.kqlqk.shop.service.impl;
 import lombok.NonNull;
 import me.kqlqk.shop.exception.UserExistsException;
 import me.kqlqk.shop.exception.UserNotFoundException;
-import me.kqlqk.shop.model.User;
+import me.kqlqk.shop.model.user.User;
 import me.kqlqk.shop.repository.UserRepository;
 import me.kqlqk.shop.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

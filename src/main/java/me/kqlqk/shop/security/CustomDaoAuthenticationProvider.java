@@ -1,7 +1,7 @@
 package me.kqlqk.shop.security;
 
 import me.kqlqk.shop.exception.BadCredentialsException;
-import me.kqlqk.shop.model.User;
+import me.kqlqk.shop.model.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

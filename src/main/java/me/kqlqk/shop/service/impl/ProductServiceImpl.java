@@ -2,7 +2,7 @@ package me.kqlqk.shop.service.impl;
 
 import me.kqlqk.shop.exception.ProductExistsException;
 import me.kqlqk.shop.exception.ProductNotFoundException;
-import me.kqlqk.shop.model.Product;
+import me.kqlqk.shop.model.product.Product;
 import me.kqlqk.shop.repository.ProductRepository;
 import me.kqlqk.shop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;

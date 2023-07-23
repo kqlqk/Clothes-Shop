@@ -1,8 +1,7 @@
 package me.kqlqk.shop.dto;
 
 import lombok.Data;
-import me.kqlqk.shop.model.OrderHistory;
-import me.kqlqk.shop.model.User;
+import me.kqlqk.shop.model.user.User;
 import me.kqlqk.shop.util.Formatter;
 
 import java.util.List;

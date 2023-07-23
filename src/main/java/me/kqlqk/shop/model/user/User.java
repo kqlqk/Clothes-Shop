@@ -1,11 +1,9 @@
-package me.kqlqk.shop.model;
+package me.kqlqk.shop.model.user;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.List;
 
 @Entity
 @Table(name = "customer")
@@ -24,22 +22,18 @@ public class User {
     @Column(name = "name", nullable = false, length = 50)
     private String name;
 
-    @Column(name = "address")
-    private String address;
-
     @Column(name = "password", nullable = false, length = 50)
     private String password; // TODO: 22/06/2023 Change to char[]
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "customer_id")
-    private List<OrderHistory> orderHistory;
+    @OneToOne(cascade = {CascadeType.ALL})
+    @JoinColumn(name = "address_id", referencedColumnName = "id")
+    private Address address;
 
 
-    public User(String email, String name, String password, String address, List<OrderHistory> OrderHistory) {
+    public User(String email, String name, String password, Address address) {
         this.email = email;
         this.name = name;
         this.password = password;
         this.address = address;
-        this.orderHistory = OrderHistory;
     }
 }

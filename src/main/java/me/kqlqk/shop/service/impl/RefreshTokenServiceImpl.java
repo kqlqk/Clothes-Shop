@@ -3,7 +3,7 @@ package me.kqlqk.shop.service.impl;
 import lombok.NonNull;
 import me.kqlqk.shop.exception.RefreshTokenExistsException;
 import me.kqlqk.shop.exception.RefreshTokenNotFoundException;
-import me.kqlqk.shop.model.RefreshToken;
+import me.kqlqk.shop.model.user.RefreshToken;
 import me.kqlqk.shop.repository.RefreshTokenRepository;
 import me.kqlqk.shop.service.RefreshTokenService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,12 +1,10 @@
-package me.kqlqk.shop.model;
+package me.kqlqk.shop.model.product;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import me.kqlqk.shop.model.enums.Colors;
-
-import java.util.List;
 
 @Entity
 @Table(name = "color")
@@ -20,11 +18,17 @@ public class Color {
     private long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "name", nullable = false, length = 100, unique = true)
+    @Column(name = "color", nullable = false, length = 50, unique = true)
     private Colors name;
 
-    @ManyToMany(mappedBy = "colors")
-    private List<Product> products;
+    @ManyToOne
+    @JoinColumn(name = "product_id", referencedColumnName = "id")
+    private Product product;
+
+    public Color(Colors name, Product product) {
+        this.name = name;
+        this.product = product;
+    }
 
     public Color(Colors name) {
         this.name = name;
