@@ -27,60 +27,59 @@
     <div class="right-side">
 
         <div id="current-order-section" style="display: none;">
-            <h3>Current Order</h3>
+            <h3>Current Orders</h3>
 
-            <div th:if="${!currentOrder.isEmpty()}">
-                <h5 th:text="${'Order num. ' + currentOrder.get(0).getUuid() + ', ' + currentOrder.get(0).getDate()}"></h5>
-                <div th:each="orderHistory : ${currentOrder}" class="card mb-3 position-relative" style="width: 60%;">
-                    <a class="row text-decoration-none text-dark"
-                       th:href="@{'/catalog/' + ${orderHistory.getOrder().getProduct().getId()}}">
-                        <div class="col-4">
-                            <img th:src="@{'/static/images'+ ${orderHistory.getOrder().getProduct().getPath()} + '/main.png'}"
-                                 class="img-fluid rounded-start" alt="...">
-                        </div>
-
-                        <div class="col-8">
-                            <div class="card-body p-2">
-                                <h6 class="card-title" th:text="${orderHistory.getOrder().getProduct().getName()}">
-                                    Name</h6>
-                                <p class="card-text m-0" th:text="${'Size: ' + orderHistory.getOrder().getSize()}">
-                                    Size</p>
-                                <p class="card-text m-0" th:text="${'Color: ' + orderHistory.getOrder().getColor()}">
-                                    Color</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            </div>
-
-            <div th:if="${user.getOrderHistory().isEmpty()}">
-                <p>You currently have no orders</p>
-            </div>
-        </div>
-
-        <div id="previous-orders-section" style="display: none;">
-            <h3>History of orders</h3>
-
-            <div th:if="${!previousOrders.isEmpty()}">
-                <div th:each="orderHistoryGroup : ${previousOrders}">
-                    <h5 th:text="${'Order num. ' + orderHistoryGroup.get(0).getUuid() + ', ' + orderHistoryGroup.get(0).getDate()}"></h5>
-                    <div th:each="orderHistory : ${orderHistoryGroup}" class="card mb-3 position-relative"
-                         style="width: 60%;">
+            <div th:if="${!currentOrders.isEmpty()}">
+                <div th:each="currentOrder : ${currentOrders}">
+                    <h5 th:text="${'Order num. ' + currentOrder.get(0).getUuid() + ', ' + currentOrder.get(0).getCreateDate()}"></h5>
+                    <div th:each="order : ${currentOrder}" class="card mb-3 position-relative" style="width: 60%;">
                         <a class="row text-decoration-none text-dark"
-                           th:href="@{'/catalog/' + ${orderHistory.getOrder().getProduct().getId()}}">
+                           th:href="@{'/catalog/' + ${order.getProduct().getId()}}">
                             <div class="col-4">
-                                <img th:src="@{'/static/images'+ ${orderHistory.getOrder().getProduct().getPath()} + '/main.png'}"
+                                <img th:src="@{'/static/images'+ ${order.getProduct().getPath()} + '/main.png'}"
                                      class="img-fluid rounded-start" alt="...">
                             </div>
 
                             <div class="col-8">
                                 <div class="card-body p-2">
-                                    <h6 class="card-title" th:text="${orderHistory.getOrder().getProduct().getName()}">
-                                        Name</h6>
-                                    <p class="card-text m-0" th:text="${'Size: ' + orderHistory.getOrder().getSize()}">
-                                        Size</p>
-                                    <p class="card-text m-0"
-                                       th:text="${'Color: ' + orderHistory.getOrder().getColor()}">Color</p>
+                                    <h6 class="card-title" th:text="${order.getProduct().getName()}">Name</h6>
+                                    <p class="card-text m-0" th:text="${'Size: ' + order.getSize().getName()}">Size</p>
+                                    <p class="card-text m-0" th:text="${'Color: ' + order.getColor().getName()}">
+                                        Color</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <br>
+                </div>
+            </div>
+
+            <div th:if="${currentOrders.isEmpty()}">
+                <p>You currently have no orders</p>
+            </div>
+        </div>
+
+
+        <div id="previous-orders-section" style="display: none;">
+            <h3>History of orders</h3>
+
+            <div th:if="${!realisedOrders.isEmpty()}">
+                <div th:each="orders : ${realisedOrders}">
+                    <h5 th:text="${'Order num. ' + orders.get(0).getUuid() + ', ' + orders.get(0).getCreateDate()}"></h5>
+                    <div th:each="order : ${orders}" class="card mb-3 position-relative" style="width: 60%;">
+                        <a class="row text-decoration-none text-dark"
+                           th:href="@{'/catalog/' + ${order.getProduct().getId()}}">
+                            <div class="col-4">
+                                <img th:src="@{'/static/images'+ ${order.getProduct().getPath()} + '/main.png'}"
+                                     class="img-fluid rounded-start" alt="...">
+                            </div>
+
+                            <div class="col-8">
+                                <div class="card-body p-2">
+                                    <h6 class="card-title" th:text="${order.getProduct().getName()}">Name</h6>
+                                    <p class="card-text m-0" th:text="${'Size: ' + order.getSize().getName()}">Size</p>
+                                    <p class="card-text m-0" th:text="${'Color: ' + order.getColor().getName()}">
+                                        Color</p>
                                 </div>
                             </div>
                         </a>
@@ -89,7 +88,7 @@
                 </div>
             </div>
 
-            <div th:if="${previousOrders.isEmpty()}">
+            <div th:if="${realisedOrders.isEmpty()}">
                 <p>You currently have no orders</p>
             </div>
         </div>
@@ -97,19 +96,6 @@
         <div id="show-address-section" style="display: none;">
             <h3>Address</h3>
 
-            <div th:if="${address != null}">
-                <div th:each="s : ${address.split(';')}">
-                    <h4 th:text="${s}"></h4>
-                </div>
-                <br/>
-
-                <a class="btn btn-outline-dark" href="#">Edit</a>
-                <a class="btn btn-outline-dark" href="#">Delete</a>
-            </div>
-
-            <div th:if="${address == null}">
-                <a class="btn btn-outline-dark" href="#">Add</a>
-            </div>
         </div>
 
         <div id="edit-user-page-section" style="display: none;">
@@ -126,49 +112,6 @@
                         <label class="form-label" for="email">Email:</label>
                         <input class="form-control" type="text" th:field="*{email}" id="email"
                                placeholder="john123@mail.com">
-                        <br/>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-sm-7 col-md-5 col-lg-4">
-                        <label class="form-label" for="country">Contry:</label>
-                        <input class="form-control" type="text" th:field="*{country}" id="country" placeholder="Spain">
-                        <br/>
-                    </div>
-
-                    <div class="col-sm-7 col-md-5 col-lg-4">
-                        <label class="form-label" for="postalCode">Postal-code:</label>
-                        <input class="form-control" type="text" th:field="*{postalCode}" id="postalCode"
-                               placeholder="00000">
-                        <br/>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-sm-7 col-md-5 col-lg-4">
-                        <label class="form-label" for="city">City:</label>
-                        <input class="form-control" type="text" th:field="*{city}" id="city" placeholder="Poznan">
-                        <br/>
-                    </div>
-
-                    <div class="col-sm-7 col-md-5 col-lg-4">
-                        <label class="form-label" for="street">Street:</label>
-                        <input class="form-control" type="text" th:field="*{street}" id="street" placeholder="Main St">
-                        <br/>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-sm-7 col-md-5 col-lg-4">
-                        <label class="form-label" for="home">Home:</label>
-                        <input class="form-control" type="text" th:field="*{home}" id="home" placeholder="4">
-                        <br/>
-                    </div>
-
-                    <div class="col-sm-7 col-md-5 col-lg-4">
-                        <label class="form-label" for="flat">Flat:</label>
-                        <input class="form-control" type="text" th:field="*{flat}" id="flat" placeholder="4">
                         <br/>
                     </div>
                 </div>
