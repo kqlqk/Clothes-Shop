@@ -28,6 +28,12 @@ public class Address {
     @Column(name = "house", nullable = false)
     private String house;
 
+    @Column(name = "flat", nullable = false)
+    private String flat;
+
+    @Column(name = "postal_code", nullable = false)
+    private String postalCode;
+
     public Address(String country, String city, String street, String house) {
         this.country = country;
         this.city = city;
