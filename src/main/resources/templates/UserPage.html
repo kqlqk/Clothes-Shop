@@ -26,7 +26,7 @@
 
     <div class="right-side">
 
-        <div id="current-order-section" style="display: none;">
+        <div id="current-order-section" th:style="${errors == true ? 'display: none;' : 'display: block;'}">
             <h3>Current Orders</h3>
 
             <div th:if="${!currentOrders.isEmpty()}">
@@ -98,28 +98,75 @@
 
         </div>
 
-        <div id="edit-user-page-section" style="display: none;">
+        <div id="edit-user-page-section" th:style="${errors == true ? 'display: block;' : 'display: none;'}">
             <h3>Edit information</h3>
 
-            <form th:method="put" th:action="@{/user/{id}(id=${user.getId()})}" th:object="${userDTO}">
+            <div th:if="${address != null}" th:text="${address}" style="color: red"></div>
+            <form id="main-information" th:method="put" th:action="@{/user/{id}(id=${user.getId()})}"
+                  th:object="${combinedDTO}">
                 <div class="row">
                     <div class="col-sm-7 col-md-5 col-lg-4">
                         <label class="form-label" for="name">Name:</label>
-                        <input class="form-control" type="text" th:field="*{name}" id="name" placeholder="John">
+                        <input class="form-control" type="text" th:field="*{userDTO.name}" id="name" placeholder="John">
+                        <div th:if="${name != null}" th:text="${name}" style="color: red"></div>
                         <br/>
                     </div>
                     <div class="col-sm-7 col-md-5 col-lg-4">
                         <label class="form-label" for="email">Email:</label>
-                        <input class="form-control" type="text" th:field="*{email}" id="email"
+                        <input class="form-control" type="text" th:field="*{userDTO.email}" id="email"
                                placeholder="john123@mail.com">
+                        <div th:if="${email != null}" th:text="${email}" style="color: red"></div>
                         <br/>
                     </div>
                 </div>
 
+                <div class="row">
+                    <div class="col-sm-7 col-md-5 col-lg-4">
+                        <label class="form-label" for="country">Country:</label>
+                        <input class="form-control" type="text" th:field="*{addressDTO.country}" id="country"
+                               placeholder="Poland">
+                        <div th:if="${country != null}" th:text="${country}" style="color: red"></div>
+                        <br/>
+                    </div>
+
+                    <div class="col-sm-7 col-md-5 col-lg-4">
+                        <label class="form-label" for="postalCode">Postal-code:</label>
+                        <input class="form-control" type="text" th:field="*{addressDTO.postalCode}" id="postalCode"
+                               placeholder="00000">
+                        <div th:if="${postalCode != null}" th:text="${postalCode}" style="color: red"></div>
+                        <br/>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-7 col-md-5 col-lg-4">
+                        <label class="form-label" for="city">City:</label>
+                        <input class="form-control" type="text" th:field="*{addressDTO.city}" id="city"
+                               placeholder="Poznan">
+                        <div th:if="${city != null}" th:text="${city}" style="color: red"></div>
+                        <br/>
+                    </div>
+
+                    <div class="col-sm-7 col-md-5 col-lg-4">
+                        <label class="form-label" for="street">Street:</label>
+                        <input class="form-control" type="text" th:field="*{addressDTO.street}" id="street"
+                               placeholder="Main St">
+                        <div th:if="${street != null}" th:text="${street}" style="color: red"></div>
+                        <br/>
+                    </div>
+                </div>
+
+                <div class="col-sm-11 col-md-9 col-lg-8">
+                    <label class="form-label" for="home">House (house/flat):</label>
+                    <input class="form-control" type="text" th:field="*{addressDTO.house}" id="home" placeholder="10/4">
+                    <div th:if="${house != null}" th:text="${house}" style="color: red"></div>
+                    <br/>
+                </div>
+
                 <input class="btn btn-outline-dark" type="submit" value="Update">
             </form>
-        </div>
 
+        </div>
 
     </div>
 </div>
@@ -157,6 +204,17 @@
     }
 
     function logout() {
+    }
+
+    function submitForms() {
+        var form1Data = new FormData(document.getElementById("main-information"));
+        var form2Data = new FormData(document.getElementById("address"));
+
+        form2Data.forEach((value, key) => form1Data.append(key, value));
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/form");
+        xhr.send(form1Data);
     }
 </script>
 
