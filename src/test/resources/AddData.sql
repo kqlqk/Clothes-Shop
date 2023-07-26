@@ -55,11 +55,11 @@ insert into product_amount (product_id, color_id, size_id, amount)
 values (1, 2, 1, 5);
 
 
-insert into address(country, city, street, house, flat, postal_code)
-values ('Poland', 'Warsaw', 'os. Bohaterego', '10/4', '1', '93214');
+insert into address(country, city, street, house, postal_code)
+values ('Poland', 'Warsaw', 'os. Bohaterego', '10/4', '93214');
 
-insert into address(country, city, street, house, flat, postal_code)
-values ('Usa', 'Texas', 'Main avenue', '2/1', '4', '434332');
+insert into address(country, city, street, house, postal_code)
+values ('Usa', 'Texas', 'Main avenue', '2/1', '434332');
 
 
 insert into customer (name, address_id, email, password)
