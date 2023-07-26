@@ -1,22 +1,36 @@
 package me.kqlqk.shop.util;
 
+import me.kqlqk.shop.dto.AddressDTO;
+import me.kqlqk.shop.exception.AddressException;
+import me.kqlqk.shop.model.user.Address;
+
 public class Formatter {
 
-    public static String formatAddressToShow(String address) {
-        String[] data = address.split(";");
+    public static Address convertToSave(AddressDTO addressDTO, Address addressDb) {
+        if (addressDb == null) {
+            if (addressDTO.getCountry() == null || addressDTO.getCountry().isBlank() ||
+                    addressDTO.getCity() == null || addressDTO.getCity().isBlank() ||
+                    addressDTO.getStreet() == null || addressDTO.getStreet().isBlank() ||
+                    addressDTO.getHouse() == null || addressDTO.getHouse().isBlank() ||
+                    addressDTO.getPostalCode() == null || addressDTO.getPostalCode().isBlank()) {
+                throw new AddressException("AddressDTO cannot contains null fields");
+            }
 
-        return "Country: " + data[0] + ";City: " + data[1] +
-                ";Street: " + data[2] + ";House: " + data[3] +
-                ";Flat: " + data[4] + ";Postal-code: " + data[5];
-    }
+            return new Address(addressDTO.getCountry(),
+                    addressDTO.getCity(),
+                    addressDTO.getStreet(),
+                    addressDTO.getHouse(),
+                    addressDTO.getPostalCode());
+        }
 
-    public static String formatAddressToSave(String country, String city, String street,
-                                             String home, String flat, String postalCode) {
-        return country + ";" +
-                city + ";" +
-                street + ";" +
-                home + ";" +
-                flat + ";" +
-                postalCode;
+        Address address = new Address();
+        address.setId(addressDb.getId());
+        address.setCountry(addressDTO.getCountry() == null || addressDTO.getCountry().isBlank() ? addressDb.getCountry() : addressDTO.getCountry());
+        address.setCity(addressDTO.getCity() == null || addressDTO.getCity().isBlank() ? addressDb.getCity() : addressDTO.getCity());
+        address.setStreet(addressDTO.getStreet() == null || addressDTO.getStreet().isBlank() ? addressDb.getStreet() : addressDTO.getStreet());
+        address.setHouse(addressDTO.getHouse() == null || addressDTO.getHouse().isBlank() ? addressDb.getHouse() : addressDTO.getHouse());
+        address.setPostalCode(addressDTO.getPostalCode() == null || addressDTO.getPostalCode().isBlank() ? addressDb.getPostalCode() : addressDTO.getPostalCode());
+
+        return address;
     }
 }
