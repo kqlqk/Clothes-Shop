@@ -65,18 +65,9 @@ public class UserServiceImpl implements UserService {
             throw new UserExistsException("User with email = " + user.getEmail() + " exists");
         }
 
-        if (user.getAddress() != null) {
-            if ((
-                    userDb.getAddress() != null && !userDb.getAddress().equals(user.getAddress()) &&
-                            user.getAddress().getId() != 0 &&
-                            userRepository.existsByAddress(user.getAddress()))
-                    ||
-                    userDb.getAddress() == null && user.getAddress().getId() != 0 &&
-                            userRepository.existsByAddress(user.getAddress())) {
-                throw new UserExistsException("User with address = " + user.getAddress() + " exists");
-            }
+        if (user.getAddress() == null) {
+            user.setAddress(userDb.getAddress());
         }
-
 
         if (user.getEmail() == null || user.getEmail().isBlank()) {
             user.setEmail(userDb.getEmail());

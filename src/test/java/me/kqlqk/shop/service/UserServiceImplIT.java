@@ -55,7 +55,7 @@ public class UserServiceImplIT {
     @Test
     public void update_shouldUpdateUserInDB() {
         User user = userService.getById(1);
-        user.setAddress(new Address("USA", "Chicago", "Chicago avenue", "1/3"));
+        user.setAddress(new Address("USA", "Chicago", "Chicago avenue", "1/3", "0000"));
 
         userService.update(user);
 
