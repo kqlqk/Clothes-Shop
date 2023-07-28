@@ -95,6 +95,16 @@
 
         <div id="show-address-section" style="display: none;">
             <h3>Address</h3>
+            <div th:if="${user.getAddress() != null}">
+                <h5 th:text="${user.getAddress().getCountry() + ' | ' + user.getAddress().getPostalCode()}"></h5>
+                <h5 th:text="${user.getAddress().getCity()}"></h5>
+                <h5 th:text="${user.getAddress().getStreet()}"></h5>
+                <h5 th:text="${user.getAddress().getHouse()}"></h5>
+            </div>
+            <div th:if="${user.getAddress() == null}">
+                <h5>You currently have not address</h5>
+            </div>
+
 
         </div>
 
