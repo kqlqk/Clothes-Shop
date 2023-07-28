@@ -20,7 +20,7 @@
             <li class="list-group-item list-group-item-action" onclick="showLastOrders()">History</li>
             <li class="list-group-item list-group-item-action" onclick="showAddress()">My Address</li>
             <li class="list-group-item list-group-item-action" onclick="editProfile()">Edit Profile</li>
-            <li class="list-group-item list-group-item-action" onclick="logout()">Logout</li>
+            <a class="list-group-item list-group-item-action text-decoration-none text-dark" href="/logout">Logout</a>
         </ul>
     </div>
 
@@ -211,20 +211,6 @@
         document.getElementById("previous-orders-section").style.display = "none";
         document.getElementById("show-address-section").style.display = "none";
         document.getElementById("edit-user-page-section").style.display = "block";
-    }
-
-    function logout() {
-    }
-
-    function submitForms() {
-        var form1Data = new FormData(document.getElementById("main-information"));
-        var form2Data = new FormData(document.getElementById("address"));
-
-        form2Data.forEach((value, key) => form1Data.append(key, value));
-
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "/form");
-        xhr.send(form1Data);
     }
 </script>
 

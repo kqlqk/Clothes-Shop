@@ -49,7 +49,14 @@ public class AppConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .exceptionHandling()
-                .authenticationEntryPoint(authenticationEntryPoint);
+                .authenticationEntryPoint(authenticationEntryPoint)
+                .and()
+                .logout()
+                .logoutSuccessUrl("/login")
+                .deleteCookies("accessToken")
+                .clearAuthentication(true)
+                .invalidateHttpSession(true)
+                .permitAll();
 
         return http.build();
     }
