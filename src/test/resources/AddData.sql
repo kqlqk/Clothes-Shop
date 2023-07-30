@@ -1,4 +1,6 @@
 delete
+from shopping_card;
+delete
 from buying_order;
 delete
 from color;
@@ -16,7 +18,6 @@ delete
 from refresh_token;
 
 
-
 ALTER SEQUENCE color_id_seq RESTART WITH 1;
 ALTER SEQUENCE size_id_seq RESTART WITH 1;
 ALTER SEQUENCE product_amount_id_seq RESTART WITH 1;
@@ -25,6 +26,7 @@ ALTER SEQUENCE customer_id_seq RESTART WITH 1;
 ALTER SEQUENCE address_id_seq RESTART WITH 1;
 ALTER SEQUENCE refresh_token_id_seq RESTART WITH 1;
 ALTER SEQUENCE buying_order_id_seq RESTART WITH 1;
+ALTER SEQUENCE shopping_card_id_seq RESTART WITH 1;
 
 
 insert into product (name, price, discount, path, description)
@@ -78,3 +80,8 @@ values (1, 1, 1, false, '10/07/2023 02:00:00', null, 2, 1);
 
 insert into buying_order (product_id, size_id, color_id, realised, create_date, delivered_date, uuid, customer_id)
 values (2, 2, 2, true, '03/06/2023 12:42:43', null, 1, null);
+
+
+insert into shopping_card(customer_id, product_id, color_id, size_id)
+values (1, 1, 1, 1);
+

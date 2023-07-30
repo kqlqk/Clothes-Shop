@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import me.kqlqk.shop.model.Card;
+
+import java.util.List;
 
 @Entity
 @Table(name = "customer")
@@ -29,6 +32,9 @@ public class User {
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
 
+    @OneToMany
+    @JoinColumn(name = "customer_id", referencedColumnName = "id")
+    private List<Card> card;
 
     public User(String email, String name, String password, Address address) {
         this.email = email;
