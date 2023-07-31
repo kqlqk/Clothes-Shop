@@ -1,6 +1,8 @@
 package me.kqlqk.shop.util;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import me.kqlqk.shop.dto.ProductBuyingDTO;
 import me.kqlqk.shop.model.enums.Colors;
@@ -30,6 +32,20 @@ public class CookieUtil {
                 "\\d+" + VALUES_DELIMITER +
                 "\\w+" + VALUES_DELIMITER +
                 "\\w+\\" + OBJECT_DELIMITER + ")*");
+    }
+
+    public static Cookie getCookieByName(@NonNull String name, @NonNull HttpServletRequest request) {
+        if (request.getCookies() == null) {
+            return null;
+        }
+
+        for (Cookie c : request.getCookies()) {
+            if (c.getName().equals("accessToken")) {
+                return c;
+            }
+        }
+
+        return null;
     }
 
     public static int getLastIdFromProductBuyingDTOs(Cookie cookie) {
