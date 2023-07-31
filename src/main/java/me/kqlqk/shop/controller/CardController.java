@@ -5,8 +5,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import me.kqlqk.shop.dto.OrderDTO;
 import me.kqlqk.shop.dto.ProductBuyingDTO;
+import me.kqlqk.shop.model.Card;
+import me.kqlqk.shop.model.product.Color;
+import me.kqlqk.shop.model.product.Product;
+import me.kqlqk.shop.model.product.Size;
+import me.kqlqk.shop.model.user.User;
+import me.kqlqk.shop.service.CardService;
 import me.kqlqk.shop.service.ProductService;
+import me.kqlqk.shop.service.UserService;
 import me.kqlqk.shop.util.CookieUtil;
+import me.kqlqk.shop.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,12 +29,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RequestMapping("/card")
 public class CardController {
     private final ProductService productService;
+    private final CardService cardService;
+    private final JwtUtil jwtUtil;
+    private final UserService userService;
 
     @Autowired
-    public CardController(ProductService productService) {
+    public CardController(ProductService productService, CardService cardService, JwtUtil jwtUtil, UserService userService) {
         this.productService = productService;
+        this.cardService = cardService;
+        this.jwtUtil = jwtUtil;
+        this.userService = userService;
     }
-
 
     @GetMapping
     public String getCardPage(HttpServletRequest request, Model model) {
@@ -63,29 +76,55 @@ public class CardController {
     public String addProductToCard(@ModelAttribute("productDTO") ProductBuyingDTO productBuyingDTO,
                                    HttpServletRequest request,
                                    HttpServletResponse response) {
-        boolean cookieExits = false;
+        Cookie cookie = CookieUtil.getCookieByName("accessToken", request);
 
-        if (request.getCookies() != null) {
-            for (Cookie c : request.getCookies()) {
-                if (c.getName().equals("product")) {
-                    int id = CookieUtil.getLastIdFromProductBuyingDTOs(c) + 1;
-                    cookieExits = true;
-                    c.setPath("/");
-                    c.setValue(c.getValue() + id + "/" + productBuyingDTO.getProductId() + "/" + productBuyingDTO.getColor() + "/" + productBuyingDTO.getSize() + ".");
-                    c.setMaxAge(36000); //10h
-                    response.addCookie(c);
+        if (cookie != null && jwtUtil.validateAccessToken(cookie.getValue())) {
+            String email = jwtUtil.getEmailFromAccessToken(cookie.getValue());
+            User user = userService.getByEmail(email);  // TODO: 31/07/2023 add checking
+
+            Product product = productService.getById(productBuyingDTO.getProductId());
+            Color color = product.getColors().stream()
+                    .filter(e -> e.getName().equals(productBuyingDTO.getColor()))
+                    .findFirst()
+                    .get();
+            Size size = product.getSizes().stream()
+                    .filter(e -> e.getName().equals(productBuyingDTO.getSize()))
+                    .findFirst()
+                    .get();
+
+            Card card = new Card(color, size, product, user);
+            cardService.add(card);
+        }
+        else {
+            boolean cookieExits = false;
+
+            if (request.getCookies() != null) {
+                for (Cookie c : request.getCookies()) {
+                    if (c.getName().equals("product")) {
+                        int id = CookieUtil.getLastIdFromProductBuyingDTOs(c) + 1;
+                        cookieExits = true;
+                        c.setPath("/");
+                        c.setValue(c.getValue() + id + "/" +
+                                productBuyingDTO.getProductId() + "/" +
+                                productBuyingDTO.getColor() + "/" +
+                                productBuyingDTO.getSize() + ".");
+                        c.setMaxAge(36000); //10h
+                        response.addCookie(c);
+                    }
                 }
             }
-        }
 
-        if (!cookieExits) {
-            Cookie cookie = new Cookie("product", 1 + "/" +
-                    productBuyingDTO.getProductId() + "/" + productBuyingDTO.getColor() + "/" + productBuyingDTO.getSize() + ".");
-            cookie.setPath("/");
-            cookie.setMaxAge(36000);
-            response.addCookie(cookie);
-        }
+            if (!cookieExits) {
+                Cookie newCookie = new Cookie("product", 1 + "/" +
+                        productBuyingDTO.getProductId() + "/" +
+                        productBuyingDTO.getColor() + "/" +
+                        productBuyingDTO.getSize() + ".");
+                newCookie.setPath("/");
+                newCookie.setMaxAge(36000);
+                response.addCookie(newCookie);
+            }
 
+        }
         return "redirect:/card";
     }
 
