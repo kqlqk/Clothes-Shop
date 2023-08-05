@@ -21,6 +21,7 @@ public class ProductControllerIT {
                 .andExpect(status().isOk())
                 .andExpect(view().name("catalog/ProductPage"))
                 .andExpect(model().attributeExists("product"))
+                .andExpect(model().attributeExists("orderDTO"))
                 .andExpect(model().attributeExists("files"));
     }
 }

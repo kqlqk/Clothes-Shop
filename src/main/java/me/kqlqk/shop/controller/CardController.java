@@ -4,7 +4,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import me.kqlqk.shop.dto.OrderDTO;
-import me.kqlqk.shop.dto.ProductBuyingDTO;
 import me.kqlqk.shop.model.Card;
 import me.kqlqk.shop.model.product.Color;
 import me.kqlqk.shop.model.product.Product;
@@ -21,7 +20,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -43,52 +41,66 @@ public class CardController {
 
     @GetMapping
     public String getCardPage(HttpServletRequest request, Model model) {
-        Cookie cookie = null;
-
-        if (request.getCookies() != null) {
-            cookie = Arrays.stream(request.getCookies())
-                    .filter(c -> c.getName().equals("product"))
-                    .findFirst()
-                    .orElse(null);
-        }
-
+        Cookie accessTokenCookie = CookieUtil.getCookieByName("accessToken", request);
         List<OrderDTO> orders = new ArrayList<>();
 
-        if (CookieUtil.containsProductBuyingDTO(cookie)) {
-            List<ProductBuyingDTO> productBuyingDTOs = CookieUtil.getProductBuyingDTOs(cookie);
+        if (accessTokenCookie != null && jwtUtil.validateAccessToken(accessTokenCookie.getValue())) {
+            String email = jwtUtil.getEmailFromAccessToken(accessTokenCookie.getValue());
+            User user = userService.getByEmail(email);
 
-            for (ProductBuyingDTO p : productBuyingDTOs) {
-                orders.add(new OrderDTO(productService.getById(p.getProductId()), p));
+            if (cardService.existsByUser(user)) {
+                cardService.getByUser(user).forEach(e -> orders.add(OrderDTO.convertToOrderDTO(e)));
+            }
+        }
+        else {
+            Cookie productCookie = CookieUtil.getCookieByName("product", request);
+
+            if (CookieUtil.containsOrderDTO(productCookie)) {
+                CookieUtil.getOrderDTOs(productCookie).forEach(e -> {
+                    Product p = productService.getById(e.getProductId());
+                    e.setProduct(p);
+                    e.setColor(p.getColors()
+                            .stream()
+                            .filter(c -> c.getName().equals(e.getColorName()))
+                            .findFirst()
+                            .get());
+                    e.setSize(p.getSizes()
+                            .stream()
+                            .filter(c -> c.getName().equals(e.getSizeName()))
+                            .findFirst()
+                            .get());
+                    orders.add(e);
+                });
             }
         }
 
         AtomicInteger totalPrice = new AtomicInteger();
-        orders.forEach(o -> totalPrice.addAndGet(o.getProduct().getPrice()));
+        orders.forEach(e -> totalPrice.addAndGet(e.getProduct().getPrice()));
 
         model.addAttribute("totalPrice", totalPrice.intValue());
         model.addAttribute("orders", orders);
-        model.addAttribute("productBuyingDTO", new ProductBuyingDTO());
+        model.addAttribute("newOrderDTO", new OrderDTO());
 
         return "CardPage";
     }
 
     @PostMapping
-    public String addProductToCard(@ModelAttribute("productDTO") ProductBuyingDTO productBuyingDTO,
+    public String addProductToCard(@ModelAttribute("orderDTO") OrderDTO orderDTO,
                                    HttpServletRequest request,
                                    HttpServletResponse response) {
         Cookie cookie = CookieUtil.getCookieByName("accessToken", request);
 
         if (cookie != null && jwtUtil.validateAccessToken(cookie.getValue())) {
             String email = jwtUtil.getEmailFromAccessToken(cookie.getValue());
-            User user = userService.getByEmail(email);  // TODO: 31/07/2023 add checking
+            User user = userService.getByEmail(email);
 
-            Product product = productService.getById(productBuyingDTO.getProductId());
+            Product product = productService.getById(orderDTO.getProductId());
             Color color = product.getColors().stream()
-                    .filter(e -> e.getName().equals(productBuyingDTO.getColor()))
+                    .filter(e -> e.getName().equals(orderDTO.getColorName()))
                     .findFirst()
                     .get();
             Size size = product.getSizes().stream()
-                    .filter(e -> e.getName().equals(productBuyingDTO.getSize()))
+                    .filter(e -> e.getName().equals(orderDTO.getSizeName()))
                     .findFirst()
                     .get();
 
@@ -98,29 +110,28 @@ public class CardController {
         else {
             boolean cookieExits = false;
 
-            if (request.getCookies() != null) {
-                for (Cookie c : request.getCookies()) {
-                    if (c.getName().equals("product")) {
-                        int id = CookieUtil.getLastIdFromProductBuyingDTOs(c) + 1;
-                        cookieExits = true;
-                        c.setPath("/");
-                        c.setValue(c.getValue() + id + "/" +
-                                productBuyingDTO.getProductId() + "/" +
-                                productBuyingDTO.getColor() + "/" +
-                                productBuyingDTO.getSize() + ".");
-                        c.setMaxAge(36000); //10h
-                        response.addCookie(c);
-                    }
-                }
+            Cookie c = CookieUtil.getCookieByName("product", request);
+            if (request.getCookies() != null && c != null) {
+                int id = CookieUtil.getLastIdFromOrderDTOs(c) + 1;
+                cookieExits = true;
+                c.setPath("/");
+                c.setValue(c.getValue() + id + "/" +
+                        orderDTO.getProductId() + "/" +
+                        orderDTO.getColorName() + "/" +
+                        orderDTO.getSizeName() + ".");
+                c.setMaxAge(10 * 365 * 24 * 60 * 60); //10years
+
+                response.addCookie(c);
             }
 
             if (!cookieExits) {
                 Cookie newCookie = new Cookie("product", 1 + "/" +
-                        productBuyingDTO.getProductId() + "/" +
-                        productBuyingDTO.getColor() + "/" +
-                        productBuyingDTO.getSize() + ".");
+                        orderDTO.getProductId() + "/" +
+                        orderDTO.getColorName() + "/" +
+                        orderDTO.getSizeName() + ".");
                 newCookie.setPath("/");
-                newCookie.setMaxAge(36000);
+                newCookie.setMaxAge(10 * 365 * 24 * 60 * 60);
+
                 response.addCookie(newCookie);
             }
 
@@ -131,15 +142,20 @@ public class CardController {
     @DeleteMapping
     public String deleteProductFromCard(HttpServletRequest request,
                                         HttpServletResponse response,
-                                        @ModelAttribute("productBuyingDTO") ProductBuyingDTO productBuyingDTO) {
-        Cookie cookie = Arrays.stream(request.getCookies())
-                .filter(c -> c.getName().equals("product"))
-                .findFirst()
-                .orElse(null);
+                                        @ModelAttribute("newOrderDTO") OrderDTO orderDTO) {
+        Cookie accessTokenCookie = CookieUtil.getCookieByName("accessToken", request);
 
-        CookieUtil.deleteProductBuyingDTO(cookie, productBuyingDTO);
+        if (accessTokenCookie != null && jwtUtil.validateAccessToken(accessTokenCookie.getValue()) && orderDTO.isAuthorized()) {
+            cardService.remove(cardService.getById(orderDTO.getId()));
+        }
+        else {
+            Cookie cookie = CookieUtil.getCookieByName("product", request);
 
-        response.addCookie(cookie);
+            CookieUtil.deleteOrderDTO(cookie, orderDTO);
+
+            response.addCookie(cookie);
+        }
+
         return "redirect:/card";
     }
 

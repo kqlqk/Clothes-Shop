@@ -1,14 +1,53 @@
 package me.kqlqk.shop.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import me.kqlqk.shop.model.Card;
+import me.kqlqk.shop.model.enums.Colors;
+import me.kqlqk.shop.model.enums.Sizes;
+import me.kqlqk.shop.model.product.Color;
 import me.kqlqk.shop.model.product.Product;
+import me.kqlqk.shop.model.product.Size;
+import me.kqlqk.shop.model.user.User;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class OrderDTO {
+    private long id;
     private Product product;
-    private ProductBuyingDTO productBuyingDTO;
+    private Color color;
+    private Size size;
+    private User user;
+    private boolean authorized;
+    private long productId;
+    private Colors colorName;
+    private Sizes sizeName;
+
+    public OrderDTO(long id, Product product, Color color, Size size, User user, boolean authorized) {
+        this.id = id;
+        this.product = product;
+        this.color = color;
+        this.size = size;
+        this.user = user;
+        this.authorized = authorized;
+    }
+
+    public OrderDTO(long id, long productId, Colors colorName, Sizes sizeName, boolean authorized) {
+        this.id = id;
+        this.productId = productId;
+        this.colorName = colorName;
+        this.sizeName = sizeName;
+        this.authorized = authorized;
+    }
+
+    public Card convertToCard() {
+        if (!authorized) {
+            return null;
+        }
+        return new Card(color, size, product, user);
+    }
+
+    public static OrderDTO convertToOrderDTO(Card card) {
+        return new OrderDTO(card.getId(), card.getProduct(), card.getColor(), card.getSize(), card.getUser(), true);
+    }
 }

@@ -1,6 +1,6 @@
 package me.kqlqk.shop.controller;
 
-import me.kqlqk.shop.dto.ProductBuyingDTO;
+import me.kqlqk.shop.dto.OrderDTO;
 import me.kqlqk.shop.model.product.Product;
 import me.kqlqk.shop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +43,7 @@ public class ProductController {
 
         model.addAttribute("product", product);
         model.addAttribute("files", fileNames);
-        model.addAttribute("productBuyingDTO", new ProductBuyingDTO());
+        model.addAttribute("orderDTO", new OrderDTO());
 
         return "catalog/ProductPage";
     }

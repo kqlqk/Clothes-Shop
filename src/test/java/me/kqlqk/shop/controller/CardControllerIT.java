@@ -3,7 +3,7 @@ package me.kqlqk.shop.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import me.kqlqk.shop.ControllerTest;
-import me.kqlqk.shop.dto.ProductBuyingDTO;
+import me.kqlqk.shop.dto.OrderDTO;
 import me.kqlqk.shop.model.enums.Colors;
 import me.kqlqk.shop.model.enums.Sizes;
 import org.junit.jupiter.api.Test;
@@ -30,14 +30,14 @@ public class CardControllerIT {
                 .andExpect(view().name("CardPage"))
                 .andExpect(model().attributeExists("totalPrice"))
                 .andExpect(model().attributeExists("orders"))
-                .andExpect(model().attributeExists("productBuyingDTO"));
+                .andExpect(model().attributeExists("newOrderDTO"));
     }
 
     @Test
     public void addProductToCard_shouldAddProductToCard() throws Exception {
-        ProductBuyingDTO productBuyingDTO = new ProductBuyingDTO(1, 1, Colors.WHITE, Sizes.XL);
+        OrderDTO orderDTO = new OrderDTO(1, 1, Colors.WHITE, Sizes.XL, false);
         ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(productBuyingDTO);
+        String json = mapper.writeValueAsString(orderDTO);
 
         mockMvc.perform(post("/card")
                         .content(json))
@@ -49,9 +49,9 @@ public class CardControllerIT {
     @Test
     public void deleteProductFromCard_shouldDeleteProductFromCard() throws Exception {
         Cookie cookie = new Cookie("product", "1/1/BLACK/L.2/2/GRAY/L");
-        ProductBuyingDTO productBuyingDTO = new ProductBuyingDTO(1, 1, Colors.BLACK, Sizes.L);
+        OrderDTO orderDTO = new OrderDTO(1, 1, Colors.WHITE, Sizes.XL, false);
         ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(productBuyingDTO);
+        String json = mapper.writeValueAsString(orderDTO);
 
         mockMvc.perform(delete("/card")
                         .cookie(cookie)

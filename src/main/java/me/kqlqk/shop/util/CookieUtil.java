@@ -4,7 +4,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import me.kqlqk.shop.dto.ProductBuyingDTO;
+import me.kqlqk.shop.dto.OrderDTO;
 import me.kqlqk.shop.model.enums.Colors;
 import me.kqlqk.shop.model.enums.Sizes;
 
@@ -16,21 +16,21 @@ import java.util.List;
 @Slf4j
 public class CookieUtil {
     public static final String OBJECT_DELIMITER = ".";
-    public static final String VALUES_DELIMITER = "/";
+    public static final String VALUE_DELIMITER = "/";
 
 
-    public static boolean containsProductBuyingDTO(Cookie cookie) {
+    public static boolean containsOrderDTO(Cookie cookie) {
         if (cookie == null || cookie.getValue() == null) {
             return false;
         }
 
-        return cookie.getValue().matches("\\d+" + VALUES_DELIMITER +
-                "\\d+" + VALUES_DELIMITER +
-                "\\w+" + VALUES_DELIMITER +
+        return cookie.getValue().matches("\\d+" + VALUE_DELIMITER +
+                "\\d+" + VALUE_DELIMITER +
+                "\\w+" + VALUE_DELIMITER +
                 "\\w+\\" + OBJECT_DELIMITER +
-                "(\\d+" + VALUES_DELIMITER +
-                "\\d+" + VALUES_DELIMITER +
-                "\\w+" + VALUES_DELIMITER +
+                "(\\d+" + VALUE_DELIMITER +
+                "\\d+" + VALUE_DELIMITER +
+                "\\w+" + VALUE_DELIMITER +
                 "\\w+\\" + OBJECT_DELIMITER + ")*");
     }
 
@@ -40,7 +40,7 @@ public class CookieUtil {
         }
 
         for (Cookie c : request.getCookies()) {
-            if (c.getName().equals("accessToken")) {
+            if (c.getName().equals(name)) {
                 return c;
             }
         }
@@ -48,52 +48,56 @@ public class CookieUtil {
         return null;
     }
 
-    public static int getLastIdFromProductBuyingDTOs(Cookie cookie) {
-        if (!containsProductBuyingDTO(cookie)) {
+    public static int getLastIdFromOrderDTOs(Cookie cookie) {
+        if (!containsOrderDTO(cookie)) {
             return 0;
         }
 
-        List<ProductBuyingDTO> productBuyingDTOs = getProductBuyingDTOs(cookie);
+        List<OrderDTO> orderDTOs = getOrderDTOs(cookie);
 
-        ProductBuyingDTO noProductBuyingDTO = new ProductBuyingDTO();
-        noProductBuyingDTO.setId(0);
+        OrderDTO noOrderDTO = new OrderDTO();
+        noOrderDTO.setId(0);
 
-        ProductBuyingDTO productBuyingDTO = productBuyingDTOs.stream()
+        OrderDTO orderDTO = orderDTOs.stream()
                 .reduce((a, b) -> a.getId() > b.getId() ? a : b)
-                .orElse(noProductBuyingDTO);
+                .orElse(noOrderDTO);
 
-        return productBuyingDTO.getId();
+        return (int) orderDTO.getId();
     }
 
-    public static List<ProductBuyingDTO> getProductBuyingDTOs(Cookie cookie) {
-        if (!containsProductBuyingDTO(cookie)) {
+    public static List<OrderDTO> getOrderDTOs(Cookie cookie) {
+        if (!containsOrderDTO(cookie)) {
             return Collections.emptyList();
         }
 
-        List<ProductBuyingDTO> productBuyingDTOs = new ArrayList<>();
-        String[] productBuyingDTOsString = cookie.getValue().split("\\" + OBJECT_DELIMITER);
+        List<OrderDTO> orders = new ArrayList<>();
+        String[] orderDTOsString = cookie.getValue().split("\\" + OBJECT_DELIMITER);
 
-        for (String productBuyingDTOString : productBuyingDTOsString) {
-            String[] values = productBuyingDTOString.split(VALUES_DELIMITER);
-            ProductBuyingDTO productBuyingDTO = new ProductBuyingDTO(Integer.parseInt(values[0]), Long.parseLong(values[1]), Colors.valueOf(values[2]), Sizes.valueOf(values[3]));
-            productBuyingDTOs.add(productBuyingDTO);
+        for (String orderDTOString : orderDTOsString) {
+            String[] values = orderDTOString.split(VALUE_DELIMITER);
+            OrderDTO orderDTO = new OrderDTO(Integer.parseInt(values[0]),
+                    Long.parseLong(values[1]),
+                    Colors.valueOf(values[2]),
+                    Sizes.valueOf(values[3]),
+                    false);
+            orders.add(orderDTO);
         }
 
-        return productBuyingDTOs;
+        return orders;
     }
 
-    public static void deleteProductBuyingDTO(Cookie cookie, ProductBuyingDTO productBuyingDTO) {
-        if (!containsProductBuyingDTO(cookie)) {
+    public static void deleteOrderDTO(Cookie cookie, OrderDTO orderDTO) {
+        if (!containsOrderDTO(cookie)) {
             log.info("Cookie was not delete, because there is no cookie with that productBuyingDTO");
             return;
         }
 
         String value = cookie.getValue();
 
-        String[] words = value.split(productBuyingDTO.getId() + VALUES_DELIMITER +
-                productBuyingDTO.getProductId() + VALUES_DELIMITER +
-                productBuyingDTO.getColor() + VALUES_DELIMITER +
-                productBuyingDTO.getSize() + "\\" + OBJECT_DELIMITER);
+        String[] words = value.split(orderDTO.getId() + VALUE_DELIMITER +
+                orderDTO.getProductId() + VALUE_DELIMITER +
+                orderDTO.getColorName() + VALUE_DELIMITER +
+                orderDTO.getSizeName() + "\\" + OBJECT_DELIMITER);
 
         StringBuilder newValue = new StringBuilder();
 

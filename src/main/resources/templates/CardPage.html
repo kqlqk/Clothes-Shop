@@ -26,20 +26,23 @@
                         <div class="card-body">
                             <h5 class="card-title" th:text="${order.getProduct().getName()}">Name</h5>
                             <br>
-                            <p class="card-text" th:text="${'Size: ' + order.getProductBuyingDTO().getSize()}">Size</p>
-                            <p class="card-text" th:text="${'Color: ' + order.getProductBuyingDTO().getColor()}">
-                                Color</p>
-                            <p class="card-text" th:text="${'Price: ' + order.getProduct().getPrice()}">Price</p>
+                            <p class="card-text" th:text="${'Size: ' + order.getSize().getName()}">Size</p>
+                            <p class="card-text" th:text="${'Color: ' + order.getColor().getName()}">Color</p>
+                            <p class="card-text" th:text="${'Price: ' + order.getProduct().getPrice() + ' pln'}">
+                                Price</p>
                         </div>
                     </div>
                 </a>
 
-                <form th:method="delete" th:action="@{/card}" th:object="${order.getProductBuyingDTO()}">
+                <form th:method="delete" th:action="@{/card}" th:object="${newOrderDTO}">
                     <input type="hidden" name="_method" value="DELETE"/>
-                    <input type="hidden" name="id" th:value="${order.getProductBuyingDTO().getId()}"/>
-                    <input type="hidden" name="productId" th:value="${order.getProduct().getId()}"/>
-                    <input type="hidden" name="color" th:value="${order.getProductBuyingDTO().getColor()}"/>
-                    <input type="hidden" name="size" th:value="${order.getProductBuyingDTO().getSize()}"/>
+                    <input type="hidden" name="id" th:value="${order.getId()}"/>
+                    <input type="hidden" name="authorized" th:value="${order.isAuthorized()}"/>
+                    <div th:if="${!order.isAuthorized()}">
+                        <input type="hidden" name="productId" th:value="${order.getProductId()}"/>
+                        <input type="hidden" name="colorName" th:value="${order.getColorName()}"/>
+                        <input type="hidden" name="sizeName" th:value="${order.getSizeName()}"/>
+                    </div>
 
                     <button type="submit" class="bin-button">
                         <img src="/static/images/bin.png" class="bin-image" alt="Bin"/>

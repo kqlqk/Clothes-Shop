@@ -43,7 +43,7 @@
 
             <br>
 
-            <form th:method="post" th:action="@{/card}" th:object="${productBuyingDTO}">
+            <form th:method="post" th:action="@{/card}" th:object="${orderDTO}">
                 <div class="form-group">
                     <input type="hidden" name="productId" th:value="${product.getId()}"/>
 
@@ -54,7 +54,7 @@
 
                         <label class="btn btn-outline-dark" onclick="toggleLabelClassColor(this)">
                             <input type="radio" name="options" autocomplete="off" th:value="${color.getName().name()}"
-                                   th:field="*{color}" th:text="${color.getName().name()}">
+                                   th:field="*{colorName}" th:text="${color.getName().name()}">
                         </label>
                     </div>
 
@@ -68,7 +68,7 @@
 
                         <label class="btn btn-outline-dark" onclick="toggleLabelClassSize(this)">
                             <input type="radio" name="options2" autocomplete="off" th:value="${size.getName().name()}"
-                                   th:field="*{size}" th:text="${size.getName().name()}">
+                                   th:field="*{sizeName}" th:text="${size.getName().name()}">
                         </label>
                     </div>
 
