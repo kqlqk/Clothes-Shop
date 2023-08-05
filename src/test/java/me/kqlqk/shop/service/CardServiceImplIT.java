@@ -65,4 +65,25 @@ public class CardServiceImplIT {
         card.setId(99);
         assertThrows(CardNotFoundException.class, () -> cardService.update(card));
     }
+
+    @Test
+    @Transactional
+    public void remove_shouldRemoveProductInDB() {
+        int oldSize = cardRepository.findAll().size();
+
+        Card card = cardService.getByUser(userService.getById(1)).get(0);
+
+        cardService.remove(card);
+
+        int newSize = cardRepository.findAll().size();
+
+        assertThat(oldSize - 1).isEqualTo(newSize);
+    }
+
+    @Test
+    public void remove_shouldThrowException() {
+        Card card = cardService.getByUser(userService.getById(1)).get(0);
+        card.setId(99);
+        assertThrows(CardNotFoundException.class, () -> cardService.remove(card));
+    }
 }

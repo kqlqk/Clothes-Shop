@@ -8,7 +8,11 @@ import java.util.List;
 
 @Service
 public interface CardService {
+    Card getById(long id);
+
     List<Card> getByUser(User user);
+
+    boolean existsByUser(User user);
 
     void add(Card card);
 

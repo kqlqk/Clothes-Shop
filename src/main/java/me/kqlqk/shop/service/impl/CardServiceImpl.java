@@ -22,6 +22,11 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
+    public Card getById(long id) {
+        return cardRepository.findById(id).orElseThrow(() -> new CardNotFoundException("Card with id = " + id + " not found"));
+    }
+
+    @Override
     public List<Card> getByUser(@NonNull User user) {
         List<Card> card = cardRepository.findByUser(user);
 
@@ -30,6 +35,11 @@ public class CardServiceImpl implements CardService {
         }
 
         return card;
+    }
+
+    @Override
+    public boolean existsByUser(User user) {
+        return cardRepository.existsByUser(user);
     }
 
     @Override
