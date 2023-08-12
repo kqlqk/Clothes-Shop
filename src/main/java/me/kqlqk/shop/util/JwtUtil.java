@@ -6,6 +6,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import me.kqlqk.shop.exception.TokenException;
 import me.kqlqk.shop.exception.UserNotFoundException;
 import me.kqlqk.shop.model.user.RefreshToken;
@@ -21,6 +22,7 @@ import java.time.ZoneId;
 import java.util.Date;
 
 @Component
+@Slf4j
 public class JwtUtil {
     private final UserService userService;
     private final RefreshTokenService refreshTokenService;
@@ -35,6 +37,29 @@ public class JwtUtil {
         this.refreshTokenService = refreshTokenService;
         accessKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(accessSecret));
         refreshKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(refreshSecret));
+    }
+
+    public String updateAccessTokenIfExpired(@NonNull String accessToken) {
+        try {
+            accessTokenErrorChecking(accessToken);
+            log.info("Access token valid, token: " + accessToken);
+            return accessToken;
+        }
+        catch (TokenException e) {
+            if (e.getMessage().equals("Token expired")) {
+                String email = getEmailFromAccessToken(accessToken);
+                String refreshToken = refreshTokenService.getByUserEmail(email).getToken();
+                refreshRefreshTokenErrorChecking(refreshToken);
+
+                String newToken = generateAccessToken(email);
+
+                log.info("Update access token, new token: " + newToken + " User: " + email);
+
+                return newToken;
+            }
+
+            throw e;
+        }
     }
 
     public String generateAccessToken(@NonNull String email) {

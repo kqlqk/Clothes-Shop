@@ -40,19 +40,43 @@ public class CardController {
     }
 
     @GetMapping
-    public String getCardPage(HttpServletRequest request, Model model) {
-        Cookie accessTokenCookie = CookieUtil.getCookieByName("accessToken", request);
+    public String getCardPage(HttpServletRequest request, Model model, HttpServletResponse response) {
         List<OrderDTO> orders = new ArrayList<>();
 
-        if (accessTokenCookie != null && jwtUtil.validateAccessToken(accessTokenCookie.getValue())) {
-            String email = jwtUtil.getEmailFromAccessToken(accessTokenCookie.getValue());
-            User user = userService.getByEmail(email);
+        String accessToken = null;
+        boolean accessTokenValid = false;
+        Cookie accessTokenCookie = CookieUtil.getCookieByName("accessToken", request);
 
-            if (cardService.existsByUser(user)) {
-                cardService.getByUser(user).forEach(e -> orders.add(OrderDTO.convertToOrderDTO(e)));
+        if (accessTokenCookie != null) {
+            accessToken = accessTokenCookie.getValue();
+            accessTokenValid = jwtUtil.validateAccessToken(accessToken);
+        }
+
+        try {
+            if (accessTokenValid) {
+                String email = jwtUtil.getEmailFromAccessToken(accessToken);
+                User user = userService.getByEmail(email);
+
+                if (cardService.existsByUser(user)) {
+                    cardService.getByUser(user).forEach(e -> orders.add(OrderDTO.convertToOrderDTO(e)));
+                }
+            }
+            else {
+                accessToken = jwtUtil.updateAccessTokenIfExpired(accessToken);
+                String email = jwtUtil.getEmailFromAccessToken(accessToken);
+                User user = userService.getByEmail(email);
+
+                if (cardService.existsByUser(user)) {
+                    cardService.getByUser(user).forEach(e -> orders.add(OrderDTO.convertToOrderDTO(e)));
+                }
+
+                Cookie cookie = new Cookie("accessToken", accessToken);
+                cookie.setPath("/");
+                cookie.setMaxAge(10 * 365 * 24 * 60 * 60);
+                response.addCookie(cookie);
             }
         }
-        else {
+        catch (RuntimeException ex) {
             Cookie productCookie = CookieUtil.getCookieByName("product", request);
 
             if (CookieUtil.containsOrderDTO(productCookie)) {
