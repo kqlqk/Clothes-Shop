@@ -1,15 +1,15 @@
 package me.kqlqk.shop.controller;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import me.kqlqk.shop.dto.LoginDTO;
 import me.kqlqk.shop.dto.RegistrationDTO;
-import me.kqlqk.shop.exception.BadCredentialsException;
-import me.kqlqk.shop.exception.UserExistsException;
-import me.kqlqk.shop.exception.UserNotFoundException;
+import me.kqlqk.shop.exception.*;
 import me.kqlqk.shop.model.user.User;
+import me.kqlqk.shop.service.RefreshTokenService;
 import me.kqlqk.shop.service.UserService;
 import me.kqlqk.shop.util.JwtUtil;
 import me.kqlqk.shop.util.LoginErrorParam;
@@ -31,12 +31,14 @@ public class AuthController {
     private final UserService userService;
     private final AuthenticationManager authManager;
     private final JwtUtil jwtUtil;
+    private final RefreshTokenService refreshTokenService;
 
     @Autowired
-    public AuthController(UserService userService, AuthenticationManager authManager, JwtUtil jwtUtil) {
+    public AuthController(UserService userService, AuthenticationManager authManager, JwtUtil jwtUtil, RefreshTokenService refreshTokenService) {
         this.userService = userService;
         this.authManager = authManager;
         this.jwtUtil = jwtUtil;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @GetMapping("/login")
@@ -124,5 +126,59 @@ public class AuthController {
         jwtUtil.generateAndSaveOrUpdateRefreshToken(registrationDTO.getEmail());
 
         return "redirect:/user/" + userService.getByEmail(registrationDTO.getEmail()).getId();
+    }
+
+    @GetMapping("/temp")
+    public String redirectToUserPageOrLoginPage(HttpServletRequest request, HttpServletResponse response) {
+        if (request.getCookies() == null) {
+            return "redirect:/login";
+        }
+
+        for (Cookie c : request.getCookies()) {
+            if (c.getName().equals("accessToken")) {
+                try {
+                    jwtUtil.accessTokenErrorChecking(c.getValue());
+                    return "redirect:/user/" + jwtUtil.getIdFromAccessToken(c.getValue());
+                }
+                catch (TokenException e) {
+                    if (e.getMessage().equals("Token expired")) {
+                        String email = jwtUtil.getEmailFromAccessToken(c.getValue());
+
+                        String refreshToken = null;
+                        try {
+                            refreshToken = refreshTokenService.getByUserEmail(email).getToken();
+
+                            jwtUtil.refreshRefreshTokenErrorChecking(refreshToken);
+
+                            String newAccessToken = jwtUtil.generateAccessToken(email);
+                            Cookie cookie = new Cookie("accessToken", newAccessToken);
+                            cookie.setPath("/");
+                            cookie.setMaxAge(10 * 365 * 24 * 60 * 60);
+                            response.addCookie(cookie);
+
+                            log.info("Update access token, new token: " + newAccessToken + " User: " + email);
+
+                            return "redirect:/user/" + jwtUtil.getIdFromAccessToken(newAccessToken);
+                        }
+                        catch (RefreshTokenNotFoundException ex) {
+                            log.warn("Refresh token not found" +
+                                    " for user: " + email +
+                                    " from ip: " + request.getRemoteAddr(), ex);
+                        }
+                        catch (TokenException ex) {
+                            log.warn("Refresh token invalid, token: " + refreshToken +
+                                    " for user: " + email +
+                                    " from ip: " + request.getRemoteAddr(), ex);
+                        }
+                    }
+                    else {
+                        log.warn("Access token invalid, token: " + c.getValue() +
+                                " from ip: " + request.getRemoteAddr(), e);
+                    }
+                }
+            }
+        }
+
+        return "redirect:/login";
     }
 }

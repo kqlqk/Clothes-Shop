@@ -1,5 +1,6 @@
 package me.kqlqk.shop.controller;
 
+import jakarta.servlet.http.Cookie;
 import me.kqlqk.shop.ControllerTest;
 import me.kqlqk.shop.dto.LoginDTO;
 import me.kqlqk.shop.dto.RegistrationDTO;
@@ -7,6 +8,7 @@ import me.kqlqk.shop.exception.BadCredentialsException;
 import me.kqlqk.shop.exception.UserNotFoundException;
 import me.kqlqk.shop.service.RefreshTokenService;
 import me.kqlqk.shop.service.UserService;
+import me.kqlqk.shop.util.JwtUtil;
 import me.kqlqk.shop.util.LoginErrorParam;
 import me.kqlqk.shop.util.RegistrationErrorParam;
 import org.junit.jupiter.api.Test;
@@ -31,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ControllerTest
 @ExtendWith(MockitoExtension.class)
-public class AuthControllerTest {
+public class AuthControllerIT {
     @Autowired
     private MockMvc mockMvc;
 
@@ -43,6 +45,9 @@ public class AuthControllerTest {
 
     @SpyBean
     private UserService userService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @Test
     public void getLoginPage_shouldReturnLoginPage() throws Exception {
@@ -168,5 +173,21 @@ public class AuthControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(cookie().doesNotExist("accessToken"))
                 .andExpect(redirectedUrl("/registration?error=" + RegistrationErrorParam.UNKNOWN));
+    }
+
+    @Test
+    public void redirectToUserPageOrLoginPage_shouldRedirectToUserPageOrLoginPage() throws Exception {
+        Cookie cookie = new Cookie("accessToken", jwtUtil.generateAccessToken("email@email.com"));
+
+        mockMvc.perform(get("/temp")
+                        .cookie(cookie))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/user/1"));
+
+        mockMvc.perform(get("/temp"))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/login"));
     }
 }
