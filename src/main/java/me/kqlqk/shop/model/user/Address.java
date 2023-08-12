@@ -2,12 +2,14 @@ package me.kqlqk.shop.model.user;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "address")
 @Data
 @NoArgsConstructor
+@EqualsAndHashCode(exclude = "id")
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
