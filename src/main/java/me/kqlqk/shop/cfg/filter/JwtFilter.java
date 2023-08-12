@@ -13,7 +13,6 @@ import me.kqlqk.shop.service.RefreshTokenService;
 import me.kqlqk.shop.service.UserService;
 import me.kqlqk.shop.util.JwtUtil;
 import me.kqlqk.shop.util.LoginErrorParam;
-import org.junit.jupiter.api.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,7 +26,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
-@Order(1)
 @Slf4j
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
@@ -97,12 +95,14 @@ public class JwtFilter extends OncePerRequestFilter {
                 try {
                     refreshToken = refreshTokenService.getByUserEmail(email).getToken();
 
+                    log.info("old token" + accessTokenFromRequest);
                     jwtUtil.refreshRefreshTokenErrorChecking(refreshToken);
                     accessTokenFromRequest = jwtUtil.generateAccessToken(email);
                     Cookie cookie = new Cookie("accessToken", accessTokenFromRequest);
                     cookie.setPath("/");
-                    cookie.setMaxAge(36000);
+                    cookie.setMaxAge(10 * 365 * 24 * 60 * 60);
                     response.addCookie(cookie);
+                    log.info("Update access token, new token: " + accessTokenFromRequest + " User: " + email);
                 }
                 catch (RefreshTokenNotFoundException ex) {
                     log.warn("Refresh token not found" +

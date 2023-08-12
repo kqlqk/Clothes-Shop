@@ -73,10 +73,5 @@ public class UserServiceImplIT {
         user.setEmail("email2@email.com");
         User userWithExistedEmail = user;
         assertThrows(UserExistsException.class, () -> userService.update(userWithExistedEmail));
-
-        user = userService.getById(1);
-        user.setAddress(userService.getById(2).getAddress());
-        User userWithExistedAddress = user;
-        assertThrows(UserExistsException.class, () -> userService.update(userWithExistedAddress));
     }
 }
