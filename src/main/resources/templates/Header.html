@@ -7,6 +7,28 @@
     <link rel="stylesheet" href="/static/css/main.css">
 </head>
 
+<style>
+    .search-bar {
+        background-color: white;
+        border-radius: 5px;
+    }
+
+    .search-button {
+        outline: none;
+        border: none;
+        background-color: transparent;
+    }
+
+    .search-button:hover {
+        background-color: transparent;
+    }
+
+    .search-input {
+        flex: 1;
+        border: none
+    }
+</style>
+
 <header class="p-3 bg-dark font">
     <div th:fragment="Header" class="container">
         <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
@@ -17,9 +39,20 @@
                 <li><a href="#" class="nav-link px-3 text-white">FAQs</a></li>
             </ul>
 
-            <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
-                <input type="search" class="form-control form-control-dark" placeholder="Search..." aria-label="Search">
+
+            <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" th:method="get" th:action="@{/search}">
+                <div class="input-group search-bar">
+                    <input type="text" class="form-control form-control-dark search-input" placeholder="Search..."
+                           th:name="search" th:value="${param.search}">
+
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-dark search-button" type="submit">
+                            <img src="/static/images/loupe.png" width="20" height="20">
+                        </button>
+                    </div>
+                </div>
             </form>
+
 
             <a href="/card" class="d-flex align-items-center mb-lg-0 ms-3">
                 <svg class="bi me-2" width="32" height="32">
@@ -36,4 +69,3 @@
         </div>
     </div>
 </header>
-

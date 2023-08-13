@@ -22,4 +22,18 @@ public class MainControllerIT {
                 .andExpect(status().isOk())
                 .andExpect(view().name("MainPage"));
     }
+
+    @Test
+    public void search_shouldSearchProducts() throws Exception {
+        mockMvc.perform(get("/search")
+                        .param("search", "white"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(view().name("SearchPage"));
+
+        mockMvc.perform(get("/search"))
+                .andDo(print())
+                .andExpect(status().is4xxClientError());
+    }
+
 }
