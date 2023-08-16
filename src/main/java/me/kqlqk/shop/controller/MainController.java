@@ -46,8 +46,13 @@ public class MainController {
     @GetMapping("/search")
     public String getSearchPage(@RequestParam String search, Model model) {
         if (!search.isEmpty()) {
-            model.addAttribute("products",
-                    searchUtil.sortProductsByScore(searchUtil.getProductsWithScore(search)));
+            List<Product> products = searchUtil.sortProductsByScore(searchUtil.getProductsWithScore(search));
+            List<Integer> productsDiscounts = new ArrayList<>();
+
+            products.forEach(e -> productsDiscounts.add((int) (e.getPrice() - (e.getPrice() / 100.0 * e.getDiscount()))));
+
+            model.addAttribute("products", products);
+            model.addAttribute("productsDiscounts", productsDiscounts);
         }
 
         return "SearchPage";
