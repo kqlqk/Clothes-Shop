@@ -10,6 +10,150 @@
 <body class="font">
 <header th:insert="~{Header}"></header>
 
+<div class="row justify-content-center main-content mtb-20px">
+
+    <h1 class="text-center">SALES</h1>
+    <div th:if="${saleProducts != null && !saleProducts.isEmpty()}" class="col-lg-3 col-md-4 col-sm-6 mb-4"
+         th:each="product, iterStat : ${saleProducts}">
+        <a th:href="@{/catalog/{id}(id=${product.getId()})}" class="text-decoration-none text-dark">
+            <div class="card">
+                <div class="image-container">
+                    <div class="loading-animation"></div>
+                </div>
+
+                <img th:src="'/static/images' + ${product.getPath()} + '/main.png'"
+                     class="card-img-top" height="192" width="64">
+
+                <div class="card-body">
+                    <div th:if="${product.getName().length() < 14}">
+                        <h5 class="card-title text-center" th:text="${product.getName()}">Title</h5>
+                        <br>
+                    </div>
+
+                    <div th:if="${product.getName().length() > 28}">
+                        <h5 class="card-title text-center product-name" th:text="${product.getName()}">Title</h5>
+                    </div>
+
+                    <div class="discount-block">
+                        <div>
+                            <span style="text-decoration: line-through" th:text="${product.getPrice()}"></span>
+                            <span th:text="${saleProductsDiscounts.get(iterStat.count - 1) + ' pln'}"></span>
+                        </div>
+
+                        <h6 class="discount bg-dark"
+                            th:text="${'-' + product.getDiscount() + '%'}">
+                        </h6>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <h1 class="text-center">NEWS</h1>
+    <div th:if="${newProducts != null && !newProducts.isEmpty()}" class="col-lg-3 col-md-4 col-sm-6 mb-4"
+         th:each="product, iterStat : ${newProducts}">
+        <a th:href="@{/catalog/{id}(id=${product.getId()})}" class="text-decoration-none text-dark">
+            <div class="card">
+                <div class="image-container">
+                    <div class="loading-animation"></div>
+                </div>
+
+                <img th:src="'/static/images' + ${product.getPath()} + '/main.png'"
+                     class="card-img-top" height="192" width="64">
+
+                <div class="card-body">
+                    <div th:if="${product.getName().length() < 14}">
+                        <h5 class="card-title text-center" th:text="${product.getName()}">Title</h5>
+                        <br>
+                    </div>
+
+                    <div th:if="${product.getName().length() > 28}">
+                        <h5 class="card-title text-center product-name" th:text="${product.getName()}">
+                            Title</h5>
+                    </div>
+
+                    <div class="discount-block">
+                        <h6 th:if="${product.getDiscount() < 1}" th:text="${product.getPrice() + ' pln'}"></h6>
+
+                        <div th:if="${product.getDiscount() > 0}">
+                            <span style="text-decoration: line-through" th:text="${product.getPrice()}"></span>
+                            <span th:text="${newProductsDiscounts.get(iterStat.count - 1) + ' pln'}"></span>
+                        </div>
+
+                        <h6 th:if="${product.getDiscount() > 0}" class="discount bg-dark"
+                            th:text="${'-' + product.getDiscount() + '%'}">
+                        </h6>
+                    </div>
+
+                </div>
+            </div>
+        </a>
+    </div>
+
+</div>
 
 </body>
 </html>
+
+
+<style>
+    .main-content {
+        padding-left: 20%;
+        padding-right: 20%;
+    }
+
+    .discount {
+        position: absolute;
+        bottom: 1%;
+        right: 5%;
+        color: white;
+        padding: 2px 5px;
+        border-radius: 5px;
+    }
+
+    .discount-block {
+        display: inline-block;
+        padding: 0;
+        border: none;
+        background: none;
+    }
+
+    .mtb-20px {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    .image-container {
+        position: relative;
+    }
+
+    .loading-animation {
+        background-color: #f6f7f8;
+        background-size: 100px 104px;
+        height: 70px;
+        position: relative;
+        margin-bottom: 20px;
+    }
+
+    .product-name {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+    }
+</style>
+
+<script>
+    var images = document.querySelectorAll('.card-img-top');
+    var loadingAnimations = document.querySelectorAll('.loading-animation');
+
+    images.forEach(function (img, index) {
+        img.addEventListener('load', function () {
+            loadingAnimations[index].style.display = 'none';
+            img.style.display = 'block';
+        });
+    });
+</script>
+
