@@ -65,4 +65,14 @@ public class ProductServiceImpl implements ProductService {
         // TODO: 22/07/2023 add checking like in userServiceImpl
         productRepository.save(product);
     }
+
+    @Override
+    public List<Product> getSales() {
+        return productRepository.findSales();
+    }
+
+    @Override
+    public List<Product> getLastProducts(int limit) {
+        return productRepository.findLastProducts(limit);
+    }
 }

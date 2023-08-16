@@ -16,4 +16,8 @@ public interface ProductService {
     void add(Product product);
 
     void update(Product product);
+
+    List<Product> getSales();
+
+    List<Product> getLastProducts(int limit);
 }
