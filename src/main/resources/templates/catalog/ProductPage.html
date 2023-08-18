@@ -23,6 +23,7 @@
                              height="500" width="500">
                     </div>
                 </div>
+                <div class="price-text" th:text="${product.getPrice() + ' pln'}">Price</div>
 
                 <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
                         data-bs-slide="prev">
@@ -38,7 +39,6 @@
 
         <div class="col-md-6">
             <p class="name-text" th:text="${product.getName()}">Name</p>
-            <p class="price-text" th:text="${product.getPrice() + ' pln'}">Price</p>
             <p class="description-text" th:text="${product.getDescription()}">Description</p>
 
             <br>
@@ -146,10 +146,11 @@
     .price-text {
         font-size: 35px;
         overflow-wrap: break-word;
+        padding-left: 2em;
     }
 
     .description-text {
-        font-size: 45px;
+        font-size: 30px;
         overflow-wrap: break-word;
     }
 </style>
