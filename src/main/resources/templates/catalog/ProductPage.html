@@ -47,7 +47,8 @@
                 <div class="form-group">
                     <input type="hidden" name="productId" th:value="${product.getId()}"/>
 
-                    <label for="chooseColor">Color:</label>
+                    <label th:style="${colorName != null ? 'color: red' : 'color: black'}"
+                           for="chooseColor">Color:</label>
                     <br>
                     <div class="btn-group btn-group-toggle" data-toggle="buttons"
                          id="chooseColor" th:each="color:${product.getColors()}">
@@ -61,7 +62,7 @@
                     <br>
                     <br>
 
-                    <label for="chooseSize">Size:</label>
+                    <label th:style="${sizeName != null ? 'color: red' : 'color: black'}" for="chooseSize">Size:</label>
                     <br>
                     <div class="btn-group btn-group-toggle" data-toggle="buttons"
                          id="chooseSize" th:each="size:${product.getSizes()}">
