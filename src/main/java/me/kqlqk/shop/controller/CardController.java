@@ -43,37 +43,12 @@ public class CardController {
     public String getCardPage(HttpServletRequest request, Model model, HttpServletResponse response) {
         List<OrderDTO> orders = new ArrayList<>();
 
-        String accessToken = null;
-        boolean accessTokenValid = false;
-        Cookie accessTokenCookie = CookieUtil.getCookieByName("accessToken", request);
-
-        if (accessTokenCookie != null) {
-            accessToken = accessTokenCookie.getValue();
-            accessTokenValid = jwtUtil.validateAccessToken(accessToken);
-        }
-
         try {
-            if (accessTokenValid) {
-                String email = jwtUtil.getEmailFromAccessToken(accessToken);
-                User user = userService.getByEmail(email);
+            String email = getEmailAndUpdateTokenIfRequired(request, response);
+            User user = userService.getByEmail(email);
 
-                if (cardService.existsByUser(user)) {
-                    cardService.getByUser(user).forEach(e -> orders.add(OrderDTO.convertToOrderDTO(e)));
-                }
-            }
-            else {
-                accessToken = jwtUtil.updateAccessTokenIfExpired(accessToken);
-                String email = jwtUtil.getEmailFromAccessToken(accessToken);
-                User user = userService.getByEmail(email);
-
-                if (cardService.existsByUser(user)) {
-                    cardService.getByUser(user).forEach(e -> orders.add(OrderDTO.convertToOrderDTO(e)));
-                }
-
-                Cookie cookie = new Cookie("accessToken", accessToken);
-                cookie.setPath("/");
-                cookie.setMaxAge(10 * 365 * 24 * 60 * 60);
-                response.addCookie(cookie);
+            if (cardService.existsByUser(user)) {
+                cardService.getByUser(user).forEach(e -> orders.add(OrderDTO.convertToOrderDTO(e)));
             }
         }
         catch (RuntimeException ex) {
@@ -112,10 +87,9 @@ public class CardController {
     public String addProductToCard(@ModelAttribute("orderDTO") OrderDTO orderDTO,
                                    HttpServletRequest request,
                                    HttpServletResponse response) {
-        Cookie cookie = CookieUtil.getCookieByName("accessToken", request);
+        try {
+            String email = getEmailAndUpdateTokenIfRequired(request, response);
 
-        if (cookie != null && jwtUtil.validateAccessToken(cookie.getValue())) {
-            String email = jwtUtil.getEmailFromAccessToken(cookie.getValue());
             User user = userService.getByEmail(email);
 
             Product product = productService.getById(orderDTO.getProductId());
@@ -131,7 +105,7 @@ public class CardController {
             Card card = new Card(color, size, product, user);
             cardService.add(card);
         }
-        else {
+        catch (RuntimeException ex) {
             boolean cookieExits = false;
 
             Cookie c = CookieUtil.getCookieByName("product", request);
@@ -158,8 +132,8 @@ public class CardController {
 
                 response.addCookie(newCookie);
             }
-
         }
+
         return "redirect:/card";
     }
 
@@ -167,12 +141,17 @@ public class CardController {
     public String deleteProductFromCard(HttpServletRequest request,
                                         HttpServletResponse response,
                                         @ModelAttribute("newOrderDTO") OrderDTO orderDTO) {
-        Cookie accessTokenCookie = CookieUtil.getCookieByName("accessToken", request);
+        try {
+            getEmailAndUpdateTokenIfRequired(request, response);
 
-        if (accessTokenCookie != null && jwtUtil.validateAccessToken(accessTokenCookie.getValue()) && orderDTO.isAuthorized()) {
-            cardService.remove(cardService.getById(orderDTO.getId()));
+            if (orderDTO.isAuthorized()) {
+                cardService.remove(cardService.getById(orderDTO.getId()));
+            }
+            else {
+                throw new RuntimeException("Unauthorized");
+            }
         }
-        else {
+        catch (RuntimeException ex) {
             Cookie cookie = CookieUtil.getCookieByName("product", request);
 
             CookieUtil.deleteOrderDTO(cookie, orderDTO);
@@ -181,6 +160,28 @@ public class CardController {
         }
 
         return "redirect:/card";
+    }
+
+    private String getEmailAndUpdateTokenIfRequired(HttpServletRequest request, HttpServletResponse response) {
+        Cookie accessTokenCookie = CookieUtil.getCookieByName("accessToken", request);
+        String accessToken = null;
+        boolean accessTokenValid = false;
+
+        if (accessTokenCookie != null) {
+            accessToken = accessTokenCookie.getValue();
+            accessTokenValid = jwtUtil.validateAccessToken(accessToken);
+        }
+
+        if (!accessTokenValid) {
+            accessToken = jwtUtil.updateAccessTokenIfExpired(accessToken);
+
+            Cookie cookie = new Cookie("accessToken", accessToken);
+            cookie.setPath("/");
+            cookie.setMaxAge(10 * 365 * 24 * 60 * 60);
+            response.addCookie(cookie);
+        }
+
+        return jwtUtil.getEmailFromAccessToken(accessToken);
     }
 
 }
