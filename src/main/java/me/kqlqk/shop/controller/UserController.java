@@ -91,6 +91,10 @@ public class UserController {
                                @Valid @ModelAttribute("combinedDTO") CombinedDTO combinedDTO,
                                BindingResult bindingResult,
                                HttpServletResponse response) {
+        if (combinedDTO.allFieldsAreNullOrBlank()) {
+            return "redirect:/user/" + id + "?errors=";
+        }
+
         if (bindingResult.hasErrors()) {
             StringBuilder sb = new StringBuilder("errors=");
 
@@ -108,10 +112,6 @@ public class UserController {
             return "redirect:/user/" + id + "?" + sb;
         }
 
-        if (combinedDTO.allFieldsAreNullOrBlank()) {
-            return "redirect:/user/" + id + "?errors";
-        }
-
         String prefix = null;
         UserDTO userDTO = combinedDTO.getUserDTO();
         AddressDTO addressDTO = combinedDTO.getAddressDTO();
@@ -122,8 +122,7 @@ public class UserController {
         user.setId(id);
         user.setEmail(userDTO.getEmail());
         user.setName(userDTO.getName());
-        if (!
-                (userDb.getAddress() == null &&
+        if (!(userDb.getAddress() == null &&
                         (addressDTO.getCountry() == null || addressDTO.getCountry().isBlank() ||
                                 addressDTO.getCity() == null || addressDTO.getCity().isBlank() ||
                                 addressDTO.getStreet() == null || addressDTO.getStreet().isBlank() ||

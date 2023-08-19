@@ -77,6 +77,10 @@ public class UserServiceImpl implements UserService {
             user.setName(userDb.getName());
         }
 
+        if (user.getCard() == null) {
+            user.setCard(userDb.getCard());
+        }
+
         if (user.getPassword() == null || user.getPassword().isBlank()) {
             user.setPassword(userDb.getPassword());
         }
