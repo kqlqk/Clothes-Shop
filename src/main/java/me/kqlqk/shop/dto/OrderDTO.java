@@ -19,6 +19,7 @@ public class OrderDTO {
     private Color color;
     private Size size;
     private User user;
+    private AddressDTO addressDTO;
     private boolean authorized;
     private long productId;
     @NotNull

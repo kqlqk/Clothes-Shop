@@ -7,6 +7,7 @@ import lombok.Setter;
 import me.kqlqk.shop.model.product.Color;
 import me.kqlqk.shop.model.product.Product;
 import me.kqlqk.shop.model.product.Size;
+import me.kqlqk.shop.model.user.Address;
 import me.kqlqk.shop.model.user.User;
 
 import java.time.LocalDateTime;
@@ -50,6 +51,10 @@ public class Order {
     @Column(name = "realised", nullable = false)
     private boolean realised;
 
+    @ManyToOne
+    @JoinColumn(name = "address_id", referencedColumnName = "id")
+    private Address address;
+
     public Order(Color color, Size size, Product product, User user, LocalDateTime createDate, LocalDateTime deliveredDate, int uuid, boolean realised) {
         this.color = color;
         this.size = size;
@@ -59,5 +64,17 @@ public class Order {
         this.deliveredDate = deliveredDate;
         this.uuid = uuid;
         this.realised = realised;
+    }
+
+    public Order(Color color, Size size, Product product, User user, LocalDateTime createDate, LocalDateTime deliveredDate, int uuid, boolean realised, Address address) {
+        this.color = color;
+        this.size = size;
+        this.product = product;
+        this.user = user;
+        this.createDate = createDate;
+        this.deliveredDate = deliveredDate;
+        this.uuid = uuid;
+        this.realised = realised;
+        this.address = address;
     }
 }
