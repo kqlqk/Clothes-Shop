@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Address</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/main.css">
+</head>
+
+<body class="font">
+
+<header th:insert="~{Header}"></header>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <form th:method="post" th:action="@{/purchase/payment}" th:object="${addressOption}"
+                  class="shadow p-4 rounded bg-white">
+
+                <h1 class="text-center mb-4">Choose an Address Option</h1>
+
+                <input type="hidden" name="orderJson" th:value="${ordersJson}"/>
+
+                <div class="form-check mb-3">
+                    <input class="form-check-input" name="addressOption" type="radio" id="option1" value="existed"
+                           th:field="*{option}">
+                    <label class="form-check-label" for="option1">Use Default Address</label>
+                    <div th:utext="${user.getAddress().getStreet() + ', ' + user.getAddress().getHouse() + ', <br>' +
+                    user.getAddress().getCity() + ', ' + user.getAddress().getCountry() + ', ' + user.getAddress().getPostalCode()}">
+                    </div>
+                </div>
+
+                <div class="form-check mb-3">
+                    <input class="form-check-input" name="addressOption" type="radio" id="option2" value="new"
+                           th:field="*{option}">
+                    <label class="form-check-label" for="option2">Use New Address</label>
+
+                    <div id="main-information" style="display: none;">
+                        <div class="row">
+                            <div class="col-sm-7 col-md-5 col-lg-4">
+                                <label class="form-label" for="country">Country:</label>
+                                <input class="form-control" type="text" th:field="*{country}" id="country"
+                                       placeholder="Poland"
+                                       pattern="[A-Za-z\s]{2,200}"
+                                       title="Please enter a valid country name (only letters and spaces)" required>
+                                <br/>
+                            </div>
+
+                            <div class="col-sm-7 col-md-5 col-lg-4">
+                                <label class="form-label" for="postalCode">Postal-code:</label>
+                                <input class="form-control" type="text" th:field="*{postalCode}" id="postalCode"
+                                       placeholder="00000"
+                                       pattern="[0-9\-]{2,200}"
+                                       title="Please enter a valid postal code (only numbers, hyphens and spaces)"
+                                       required>
+                                <br/>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-7 col-md-5 col-lg-4">
+                                <label class="form-label" for="city">City:</label>
+                                <input class="form-control" type="text" th:field="*{city}" id="city"
+                                       placeholder="Poznan"
+                                       pattern="[A-Za-z\s]{2,200}"
+                                       title="Please enter a valid city name (only letters and spaces)" required>
+                                <br/>
+                            </div>
+
+                            <div class="col-sm-7 col-md-5 col-lg-4">
+                                <label class="form-label" for="street">Street:</label>
+                                <input class="form-control" type="text" th:field="*{street}" id="street"
+                                       placeholder="Main St"
+                                       pattern="[A-Za-z\s0-9\-]{2,200}"
+                                       title="Please enter a valid street name (only letters, numbers, hyphens and spaces)"
+                                       required>
+                                <br/>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-11 col-md-9 col-lg-8">
+                            <label class="form-label" for="home">House (house/flat):</label>
+                            <input class="form-control" type="text" th:field="*{house}" id="home" placeholder="10/4"
+                                   pattern="[A-Za-z\s0-9\-]{2,200}"
+                                   title="Please enter a valid house name (only letters, numbers, hyphens and spaces)"
+                                   required>
+                            <br/>
+                        </div>
+                    </div>
+
+                </div>
+
+                <button type="submit" class="btn btn-dark btn-lg btn-block">Continue</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+
+<script>
+    const useNewAddressRadio = document.getElementById('option2');
+    const useDefaultAddressRadio = document.getElementById('option1');
+    const newAddressForm = document.getElementById('main-information');
+
+    useNewAddressRadio.addEventListener('change', function () {
+        newAddressForm.style.display = this.checked ? 'block' : 'none';
+    });
+
+    useDefaultAddressRadio.addEventListener('change', function () {
+        newAddressForm.style.display = 'none';
+    });
+</script>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Address</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/main.css">
+</head>
+
+<body class="font">
+
+<header th:insert="~{Header}"></header>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <form th:method="post" th:action="@{/purchase/confirm}" th:object="${paymentOption}"
+                  class="shadow p-4 rounded bg-white">
+
+                <h1 class="text-center mb-4">Choose a Payment Option</h1>
+
+                <input type="hidden" name="orderJson" th:value="${ordersJson}"/>
+                <input type="hidden" name="totalPrice" th:value="${totalPrice}"/>
+
+                <div class="form-check mb-3">
+                    <input class="form-check-input" name="paymentOption" type="radio" id="option1" value="card"
+                           th:field="*{option}">
+                    <label class="form-check-label" for="option1">Credit/Debit card</label>
+                </div>
+
+                <div class="form-check mb-3">
+                    <input class="form-check-input" name="paymentOption" type="radio" id="option2" value="paypal"
+                           th:field="*{option}">
+                    <label class="form-check-label" for="option2">PayPal</label>
+                </div>
+
+                <div class="form-check mb-3">
+                    <input class="form-check-input" name="paymentOption" type="radio" id="option3" value="crypto"
+                           th:field="*{option}">
+                    <label class="form-check-label" for="option3">Crypto</label>
+                </div>
+
+                <button type="submit" class="btn btn-dark btn-lg btn-block">Continue</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

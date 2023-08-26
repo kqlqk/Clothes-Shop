@@ -1,10 +1,13 @@
 package me.kqlqk.shop.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import me.kqlqk.shop.dto.OrderDTO;
+import me.kqlqk.shop.dto.OrderJsonDTO;
 import me.kqlqk.shop.model.Card;
 import me.kqlqk.shop.model.product.Color;
 import me.kqlqk.shop.model.product.Product;
@@ -44,7 +47,7 @@ public class CardController {
     }
 
     @GetMapping
-    public String getCardPage(HttpServletRequest request, Model model, HttpServletResponse response) {
+    public String getCardPage(HttpServletRequest request, Model model, HttpServletResponse response) throws JsonProcessingException {
         List<OrderDTO> orders = new ArrayList<>();
 
         try {
@@ -83,6 +86,8 @@ public class CardController {
         model.addAttribute("totalPrice", totalPrice.intValue());
         model.addAttribute("orders", orders);
         model.addAttribute("newOrderDTO", new OrderDTO());
+        model.addAttribute("ordersJson", new ObjectMapper().writeValueAsString(orders));
+        model.addAttribute("newOrderJsonDTO", new OrderJsonDTO());
 
         return "user/CardPage";
     }
