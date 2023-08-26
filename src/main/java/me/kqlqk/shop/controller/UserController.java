@@ -83,7 +83,7 @@ public class UserController {
         model.addAttribute("user", user);
         model.addAttribute("combinedDTO", new CombinedDTO());
 
-        return "UserPage";
+        return "user/UserPage";
     }
 
     @PutMapping

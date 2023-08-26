@@ -84,7 +84,7 @@ public class CardController {
         model.addAttribute("orders", orders);
         model.addAttribute("newOrderDTO", new OrderDTO());
 
-        return "CardPage";
+        return "user/CardPage";
     }
 
     @PostMapping
