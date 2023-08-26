@@ -1,9 +1,13 @@
 package me.kqlqk.shop.dto;
 
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class AddressDTO {
     @Pattern(regexp = "(|.{1,200})", message = "Country should be between 1 and 200 characters")
     private String country;
