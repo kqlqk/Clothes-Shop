@@ -1,5 +1,6 @@
 package me.kqlqk.shop.model.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,6 +33,7 @@ public class User {
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
 
+    @JsonIgnore
     @OneToMany
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
     private List<Card> card;
