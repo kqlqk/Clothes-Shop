@@ -117,15 +117,16 @@
                 <div class="row">
                     <div class="col-sm-7 col-md-5 col-lg-4">
                         <label class="form-label" for="name">Name:</label>
-                        <input class="form-control" type="text" th:field="*{userDTO.name}" id="name" placeholder="John">
-                        <div th:if="${name != null}" th:text="${name}" style="color: red"></div>
+                        <input class="form-control" type="text" th:field="*{userDTO.name}" id="name" placeholder="John"
+                               pattern="[a-zA-Z]{2,50}"
+                               title="Please enter a valid name (only letters)">
                         <br/>
                     </div>
                     <div class="col-sm-7 col-md-5 col-lg-4">
                         <label class="form-label" for="email">Email:</label>
                         <input class="form-control" type="text" th:field="*{userDTO.email}" id="email"
-                               placeholder="john123@mail.com">
-                        <div th:if="${email != null}" th:text="${email}" style="color: red"></div>
+                               placeholder="john123@mail.com"
+                               pattern="^[^\s@]{3,}@[^\s@]{2,}\.[^\s@]{2,}" title="Please enter a valid email">
                         <br/>
                     </div>
                 </div>
@@ -134,16 +135,16 @@
                     <div class="col-sm-7 col-md-5 col-lg-4">
                         <label class="form-label" for="country">Country:</label>
                         <input class="form-control" type="text" th:field="*{addressDTO.country}" id="country"
-                               placeholder="Poland">
-                        <div th:if="${country != null}" th:text="${country}" style="color: red"></div>
+                               placeholder="Poland" pattern="[A-Za-z\s]{2,200}"
+                               title="Please enter a valid country name (only letters and spaces)">
                         <br/>
                     </div>
 
                     <div class="col-sm-7 col-md-5 col-lg-4">
                         <label class="form-label" for="postalCode">Postal-code:</label>
                         <input class="form-control" type="text" th:field="*{addressDTO.postalCode}" id="postalCode"
-                               placeholder="00000">
-                        <div th:if="${postalCode != null}" th:text="${postalCode}" style="color: red"></div>
+                               placeholder="00000" pattern="[0-9\-]{2,200}"
+                               title="Please enter a valid postal code (only numbers, hyphens and spaces)">
                         <br/>
                     </div>
                 </div>
@@ -152,24 +153,25 @@
                     <div class="col-sm-7 col-md-5 col-lg-4">
                         <label class="form-label" for="city">City:</label>
                         <input class="form-control" type="text" th:field="*{addressDTO.city}" id="city"
-                               placeholder="Poznan">
-                        <div th:if="${city != null}" th:text="${city}" style="color: red"></div>
+                               placeholder="Poznan" pattern="[A-Za-z\s]{2,200}"
+                               title="Please enter a valid city name (only letters and spaces)">
                         <br/>
                     </div>
 
                     <div class="col-sm-7 col-md-5 col-lg-4">
                         <label class="form-label" for="street">Street:</label>
                         <input class="form-control" type="text" th:field="*{addressDTO.street}" id="street"
-                               placeholder="Main St">
-                        <div th:if="${street != null}" th:text="${street}" style="color: red"></div>
+                               placeholder="Main St" pattern="[A-Za-z\s0-9\-]{2,200}"
+                               title="Please enter a valid street name (only letters, numbers, hyphens and spaces)">
                         <br/>
                     </div>
                 </div>
 
                 <div class="col-sm-11 col-md-9 col-lg-8">
                     <label class="form-label" for="home">House (house/flat):</label>
-                    <input class="form-control" type="text" th:field="*{addressDTO.house}" id="home" placeholder="10/4">
-                    <div th:if="${house != null}" th:text="${house}" style="color: red"></div>
+                    <input class="form-control" type="text" th:field="*{addressDTO.house}" id="home" placeholder="10/4"
+                           pattern="[A-Za-z\s0-9\-]{2,200}"
+                           title="Please enter a valid house name (only letters, numbers, hyphens and spaces)">
                     <br/>
                 </div>
 

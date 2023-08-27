@@ -3,7 +3,6 @@ package me.kqlqk.shop.controller;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import me.kqlqk.shop.dto.LoginDTO;
 import me.kqlqk.shop.dto.RegistrationDTO;
@@ -19,7 +18,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,13 +48,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String logIn(@Valid @ModelAttribute(name = "loginDTO") LoginDTO loginDTO,
-                        BindingResult bindingResult,
+    public String logIn(@ModelAttribute(name = "loginDTO") LoginDTO loginDTO,
                         HttpServletResponse response) {
-        if (bindingResult.hasErrors()) {
-            return "auth/LoginPage";
-        }
-
         User user;
         try {
             user = userService.getByEmail(loginDTO.getEmail());
@@ -92,13 +85,8 @@ public class AuthController {
     }
 
     @PostMapping("/registration")
-    public String signUp(@Valid @ModelAttribute(name = "registrationDTO") RegistrationDTO registrationDTO,
-                         BindingResult bindingResult,
+    public String signUp(@ModelAttribute(name = "registrationDTO") RegistrationDTO registrationDTO,
                          HttpServletResponse response) {
-        if (bindingResult.hasErrors()) {
-            return "auth/RegistrationPage";
-        }
-
         User user = new User();
         user.setEmail(registrationDTO.getEmail());
         user.setName(registrationDTO.getName());

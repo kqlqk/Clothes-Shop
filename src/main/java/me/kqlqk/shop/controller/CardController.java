@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import me.kqlqk.shop.dto.OrderDTO;
 import me.kqlqk.shop.dto.OrderJsonDTO;
 import me.kqlqk.shop.model.Card;
@@ -21,9 +20,6 @@ import me.kqlqk.shop.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -93,25 +89,9 @@ public class CardController {
     }
 
     @PostMapping
-    public String addProductToCard(@Valid @ModelAttribute("orderDTO") OrderDTO orderDTO,
-                                   BindingResult bindingResult,
+    public String addProductToCard(@ModelAttribute("orderDTO") OrderDTO orderDTO,
                                    HttpServletRequest request,
                                    HttpServletResponse response) {
-        if (bindingResult.hasErrors()) {
-            StringBuilder sb = new StringBuilder("errors=");
-
-            List<ObjectError> errors = bindingResult.getAllErrors();
-            for (int i = 0; i < errors.size(); i++) {
-                sb.append(((FieldError) errors.get(i)).getField());
-
-                if (i + 1 != errors.size()) {
-                    sb.append("&errors=");
-                }
-            }
-
-            return "redirect:/catalog/" + orderDTO.getProductId() + "?" + sb;
-        }
-
         try {
             String email = getEmailAndUpdateTokenIfRequired(request, response);
             User user = userService.getByEmail(email);

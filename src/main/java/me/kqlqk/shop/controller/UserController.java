@@ -2,11 +2,12 @@ package me.kqlqk.shop.controller;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import me.kqlqk.shop.dto.AddressDTO;
 import me.kqlqk.shop.dto.CombinedDTO;
 import me.kqlqk.shop.dto.UserDTO;
+import me.kqlqk.shop.exception.AddressException;
 import me.kqlqk.shop.exception.OrderNotFoundException;
+import me.kqlqk.shop.exception.UserExistsException;
 import me.kqlqk.shop.model.Order;
 import me.kqlqk.shop.model.user.User;
 import me.kqlqk.shop.service.OrderService;
@@ -17,9 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -88,28 +86,10 @@ public class UserController {
 
     @PutMapping
     public String editUserPage(@PathVariable long id,
-                               @Valid @ModelAttribute("combinedDTO") CombinedDTO combinedDTO,
-                               BindingResult bindingResult,
+                               @ModelAttribute("combinedDTO") CombinedDTO combinedDTO,
                                HttpServletResponse response) {
         if (combinedDTO.allFieldsAreNullOrBlank()) {
             return "redirect:/user/" + id + "?errors=";
-        }
-
-        if (bindingResult.hasErrors()) {
-            StringBuilder sb = new StringBuilder("errors=");
-
-            List<ObjectError> errors = bindingResult.getAllErrors();
-            for (int i = 0; i < errors.size(); i++) {
-                sb.append(((FieldError) errors.get(i)).getField())
-                        .append("_")
-                        .append(errors.get(i).getDefaultMessage());
-
-                if (i + 1 != errors.size()) {
-                    sb.append("&errors=");
-                }
-            }
-
-            return "redirect:/user/" + id + "?" + sb;
         }
 
         String prefix = null;
@@ -122,18 +102,17 @@ public class UserController {
         user.setId(id);
         user.setEmail(userDTO.getEmail());
         user.setName(userDTO.getName());
-        if (!(userDb.getAddress() == null &&
-                        (addressDTO.getCountry() == null || addressDTO.getCountry().isBlank() ||
-                                addressDTO.getCity() == null || addressDTO.getCity().isBlank() ||
-                                addressDTO.getStreet() == null || addressDTO.getStreet().isBlank() ||
-                                addressDTO.getHouse() == null || addressDTO.getHouse().isBlank() ||
-                                addressDTO.getPostalCode() == null || addressDTO.getPostalCode().isBlank()))) {
+
+        try {
             user.setAddress(Formatter.convertToSave(addressDTO, userDb.getAddress()));
+            userService.update(user);
         }
-        else {
+        catch (AddressException e) {
             prefix = "?errors=addressDTO.address_First time you should fill all address' form";
         }
-        userService.update(user);
+        catch (UserExistsException e) {
+            prefix = "?errors=addressDTO.address_Email already exists";
+        }
 
         if (!oldEmail.equalsIgnoreCase(user.getEmail())) {
             Cookie cookie = new Cookie("accessToken", jwtUtil.generateAccessToken(userDTO.getEmail()));

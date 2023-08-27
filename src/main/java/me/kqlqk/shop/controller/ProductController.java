@@ -10,7 +10,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,8 +32,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public String getProductPage(@PathVariable long id, Model model,
-                                 @RequestParam(value = "errors", required = false) String[] errors) throws IOException {
+    public String getProductPage(@PathVariable long id, Model model) throws IOException {
         Product product = productService.getById(id);
 
         List<String> fileNames = Files.walk(Paths.get(IMAGES_FOLDER + "/" + product.getPath()))
@@ -46,12 +44,6 @@ public class ProductController {
         model.addAttribute("product", product);
         model.addAttribute("files", fileNames);
         model.addAttribute("orderDTO", new OrderDTO());
-
-        if (errors != null) {
-            for (String s : errors) {
-                model.addAttribute(s, s);
-            }
-        }
 
         return "catalog/ProductPage";
     }

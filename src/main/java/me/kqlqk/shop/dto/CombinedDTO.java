@@ -1,14 +1,10 @@
 package me.kqlqk.shop.dto;
 
-import jakarta.validation.Valid;
 import lombok.Data;
 
 @Data
 public class CombinedDTO {
-    @Valid
     private UserDTO userDTO;
-
-    @Valid
     private AddressDTO addressDTO;
 
     public boolean allFieldsAreNullOrBlank() {

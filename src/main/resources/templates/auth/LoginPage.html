@@ -21,19 +21,18 @@
              th:text="'Try sign in one more time'" style="color: red"></div>
         <div th:if="${errorParam != null && errorParam.equals('SHOULD_LOGIN')}"
              th:text="'You should sign in'" style="color: red"></div>
+
         <label class="form-label" for="email">Email</label>
-        <input class="form-control" type="text" th:field="*{email}" id="email" placeholder="john123@mail.com"/>
-        <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red"></div>
+        <input class="form-control" type="text" th:field="*{email}" id="email" placeholder="john123@mail.com"
+               pattern="[^\s@]{3,}@[^\s@]{2,}\.[^\s@]{2,}" title="Please enter a valid email" required/>
         <br>
 
         <label class="form-label" for="password">Password</label>
-        <input class="form-control" type="text" th:field="*{password}" id="password" placeholder="Password123"/>
-        <div th:if="${#fields.hasErrors('password')}" style="color: red">
-            Password should be: <br>
-            1. between 8 and 50 characters <br>
-            2. minimum 1 number <br>
-            3. both lower and uppercase letters
-        </div>
+        <input class="form-control" type="text" th:field="*{password}" id="password" placeholder="Password123"
+               pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,50}"
+               title="'Please enter a valid password: 1. Between 8 and 50 characters 2. Minimum 1 number
+               3. Both lower and uppercase letters'"
+               required/>
 
         <div style="margin-bottom: 10%;"></div>
         <button style="width: 100%" class="btn btn-outline-dark btn-lg" type="submit">Sign in</button>

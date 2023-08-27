@@ -8,6 +8,10 @@ public class Formatter {
 
     public static Address convertToSave(AddressDTO addressDTO, Address addressDb) {
         if (addressDb == null) {
+            if (allFieldsAreNullOrBlank(addressDTO)) {
+                return null;
+            }
+
             if (addressDTO.getCountry() == null || addressDTO.getCountry().isBlank() ||
                     addressDTO.getCity() == null || addressDTO.getCity().isBlank() ||
                     addressDTO.getStreet() == null || addressDTO.getStreet().isBlank() ||
@@ -32,5 +36,13 @@ public class Formatter {
         address.setPostalCode(addressDTO.getPostalCode() == null || addressDTO.getPostalCode().isBlank() ? addressDb.getPostalCode() : addressDTO.getPostalCode());
 
         return address;
+    }
+
+    public static boolean allFieldsAreNullOrBlank(AddressDTO addressDTO) {
+        return (addressDTO.getCountry() == null || addressDTO.getCountry().isBlank()) &&
+                (addressDTO.getCity() == null || addressDTO.getCity().isBlank()) &&
+                (addressDTO.getStreet() == null || addressDTO.getStreet().isBlank()) &&
+                (addressDTO.getHouse() == null || addressDTO.getHouse().isBlank()) &&
+                (addressDTO.getPostalCode() == null || addressDTO.getPostalCode().isBlank());
     }
 }

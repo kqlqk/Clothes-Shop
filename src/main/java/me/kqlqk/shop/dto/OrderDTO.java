@@ -1,6 +1,5 @@
 package me.kqlqk.shop.dto;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.kqlqk.shop.model.Card;
@@ -22,9 +21,7 @@ public class OrderDTO {
     private AddressDTO addressDTO;
     private boolean authorized;
     private long productId;
-    @NotNull
     private Colors colorName;
-    @NotNull
     private Sizes sizeName;
 
     public OrderDTO(long id, Product product, Color color, Size size, User user, boolean authorized) {

@@ -40,36 +40,34 @@
         <div class="col-md-6">
             <p class="name-text" th:text="${product.getName()}">Name</p>
             <p class="description-text" th:text="${product.getDescription()}">Description</p>
-
             <br>
 
             <form th:method="post" th:action="@{/card}" th:object="${orderDTO}">
                 <div class="form-group">
                     <input type="hidden" name="productId" th:value="${product.getId()}"/>
 
-                    <label th:style="${colorName != null ? 'color: red' : 'color: black'}"
-                           for="chooseColor">Color:</label>
+                    <label for="chooseColor">Color:</label>
                     <br>
                     <div class="btn-group btn-group-toggle" data-toggle="buttons"
                          id="chooseColor" th:each="color:${product.getColors()}">
 
                         <label class="btn btn-outline-dark" onclick="toggleLabelClassColor(this)">
                             <input type="radio" name="options" autocomplete="off" th:value="${color.getName().name()}"
-                                   th:field="*{colorName}" th:text="${color.getName().name()}">
+                                   th:field="*{colorName}" th:text="${color.getName().name()}" required>
                         </label>
                     </div>
 
                     <br>
                     <br>
 
-                    <label th:style="${sizeName != null ? 'color: red' : 'color: black'}" for="chooseSize">Size:</label>
+                    <label for="chooseSize">Size:</label>
                     <br>
                     <div class="btn-group btn-group-toggle" data-toggle="buttons"
                          id="chooseSize" th:each="size:${product.getSizes()}">
 
                         <label class="btn btn-outline-dark" onclick="toggleLabelClassSize(this)">
                             <input type="radio" name="options2" autocomplete="off" th:value="${size.getName().name()}"
-                                   th:field="*{sizeName}" th:text="${size.getName().name()}">
+                                   th:field="*{sizeName}" th:text="${size.getName().name()}" required>
                         </label>
                     </div>
 
