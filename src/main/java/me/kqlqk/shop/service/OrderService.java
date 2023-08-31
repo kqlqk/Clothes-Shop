@@ -14,6 +14,8 @@ public interface OrderService {
 
     List<Order> getByUserAndRealised(User user, boolean realised);
 
+    List<Order> getAll();
+
     void add(Order order);
 
     void update(Order order);

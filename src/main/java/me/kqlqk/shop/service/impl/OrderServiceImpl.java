@@ -49,6 +49,17 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public List<Order> getAll() {
+        List<Order> orders = orderRepository.findAll();
+
+        if (orders.isEmpty()) {
+            throw new OrderNotFoundException("Orders not found");
+        }
+
+        return orders;
+    }
+
+    @Override
     public void add(@NonNull Order order) {
         if (orderRepository.existsById(order.getId())) {
             throw new OrderExistsException("Order with id = " + order.getId() + " exists");
