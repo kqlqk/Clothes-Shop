@@ -35,4 +35,12 @@ public class Color {
     public Color(Colors name) {
         this.name = name;
     }
+
+    @Override
+    public String toString() {
+        return "Color{" +
+                "id=" + id +
+                ", name=" + name +
+                '}';
+    }
 }
