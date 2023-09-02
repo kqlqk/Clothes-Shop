@@ -14,6 +14,7 @@ import me.kqlqk.shop.service.UserService;
 import me.kqlqk.shop.util.JwtUtil;
 import me.kqlqk.shop.util.LoginErrorParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,8 +31,11 @@ import java.io.IOException;
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
-    private UserDetailsService userDetailsService;
     private final UserService userService;
+    private UserDetailsService userDetailsService;
+
+    @Value("${admin.email}")
+    private String adminEmail;
 
     @Autowired
     public JwtFilter(JwtUtil jwtUtil, RefreshTokenService refreshTokenService, UserService userService) {
@@ -50,7 +54,7 @@ public class JwtFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         String requestURI = request.getRequestURI();
-        if (!requestURI.startsWith("/user")) {
+        if (!(requestURI.startsWith("/user") || requestURI.startsWith("/admin"))) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -77,11 +81,19 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        String[] word = requestURI.split("/");
-        int id = Integer.parseInt(word[2]);
+        if (request.getRequestURI().startsWith("/user")) {
+            String[] word = requestURI.split("/");
+            int id = Integer.parseInt(word[2]);
 
-        if (user.getId() != id) {
-            response.sendRedirect("redirect:/user/" + user.getId());
+            if (user.getId() != id) {
+                response.sendRedirect("redirect:/user/" + user.getId());
+                return;
+            }
+        }
+
+        // TODO change hardcoded part
+        if (request.getRequestURI().startsWith("/admin") && !email.equalsIgnoreCase(adminEmail)) {
+            response.sendRedirect("redirect:/");
             return;
         }
 
