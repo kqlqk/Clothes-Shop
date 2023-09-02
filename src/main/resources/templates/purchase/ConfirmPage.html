@@ -51,7 +51,7 @@
                 <br>
 
                 <h3 class="mb-0">Address</h3>
-                <div th:utext="${'Address' + '<br>' + orders.get(0).getAddressDTO().getStreet() + ', ' +
+                <div th:utext="${orders.get(0).getAddressDTO().getStreet() + ', ' +
                  orders.get(0).getAddressDTO().getHouse() + ', <br>' + orders.get(0).getAddressDTO().getCity() + ', ' +
                  orders.get(0).getAddressDTO().getCountry() + ', ' + orders.get(0).getAddressDTO().getPostalCode()}">
                 </div>

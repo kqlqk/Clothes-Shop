@@ -10,6 +10,7 @@ import lombok.Data;
 import me.kqlqk.shop.dto.AddressDTO;
 import me.kqlqk.shop.dto.OrderDTO;
 import me.kqlqk.shop.dto.OrderJsonDTO;
+import me.kqlqk.shop.exception.UserNotFoundException;
 import me.kqlqk.shop.model.Order;
 import me.kqlqk.shop.model.user.Address;
 import me.kqlqk.shop.model.user.User;
@@ -54,7 +55,10 @@ public class PurchaseController {
 
             model.addAttribute("user", user);
         }
-        catch (RuntimeException ignored) {
+        catch (RuntimeException e) {
+            if (!(e instanceof UserNotFoundException || e instanceof NullPointerException)) {
+                return "redirect:/card?error=STH_WRONG"; // todo Handle
+            }
         }
 
         model.addAttribute("ordersJson", orderJsonDTO.getOrderJson());
@@ -68,14 +72,13 @@ public class PurchaseController {
     public String choosePayment(HttpServletRequest request, HttpServletResponse response,
                                 Model model, @ModelAttribute("addressOption") AddressOption addressOption,
                                 @ModelAttribute("newOrderJsonDTO") OrderJsonDTO orderJsonDTO) throws JsonProcessingException {
-        String email;
         try {
-            email = getEmailAndUpdateTokenIfRequired(request, response);
-            User user = userService.getByEmail(email);
-
-            model.addAttribute("user", user);
+            getEmailAndUpdateTokenIfRequired(request, response);
         }
-        catch (RuntimeException ignored) {
+        catch (RuntimeException e) {
+            if (!(e instanceof UserNotFoundException || e instanceof NullPointerException)) {
+                return "redirect:/card?error=STH_WRONG";
+            }
         }
 
         List<OrderDTO> orderDTOs = new ObjectMapper().readValue(orderJsonDTO.getOrderJson(), new TypeReference<List<OrderDTO>>() {
@@ -108,17 +111,16 @@ public class PurchaseController {
                                Model model, @ModelAttribute("paymentOption") PaymentOption paymentOption,
                                @ModelAttribute("newOrderJsonDTO") OrderJsonDTO orderJsonDTO,
                                @ModelAttribute("totalPrice") int totalPrice) throws JsonProcessingException {
-        String email;
         List<OrderDTO> orderDTOs = new ObjectMapper().readValue(orderJsonDTO.getOrderJson(), new TypeReference<List<OrderDTO>>() {
         });
 
         try {
-            email = getEmailAndUpdateTokenIfRequired(request, response);
-            User user = userService.getByEmail(email);
-
-            model.addAttribute("user", user);
+            getEmailAndUpdateTokenIfRequired(request, response);
         }
-        catch (RuntimeException ignored) {
+        catch (RuntimeException e) {
+            if (!(e instanceof UserNotFoundException || e instanceof NullPointerException)) {
+                return "redirect:/card?error=STH_WRONG";
+            }
         }
 
         model.addAttribute("ordersJson", orderJsonDTO.getOrderJson());
@@ -140,20 +142,19 @@ public class PurchaseController {
 
     @PostMapping("/redirect")
     public String redirectToPay(HttpServletRequest request, HttpServletResponse response,
-                                Model model, @ModelAttribute("newOrderJsonDTO") OrderJsonDTO orderJsonDTO,
+                                @ModelAttribute("newOrderJsonDTO") OrderJsonDTO orderJsonDTO,
                                 @RequestParam("paymentOption") String paymentOption) throws JsonProcessingException {
-        String email;
         List<OrderDTO> orderDTOs = new ObjectMapper().readValue(orderJsonDTO.getOrderJson(), new TypeReference<List<OrderDTO>>() {
         });
         List<Order> orders = new ArrayList<>();
 
         try {
-            email = getEmailAndUpdateTokenIfRequired(request, response);
-            User user = userService.getByEmail(email);
-
-            model.addAttribute("user", user);
+            getEmailAndUpdateTokenIfRequired(request, response);
         }
-        catch (RuntimeException ignored) {
+        catch (RuntimeException e) {
+            if (!(e instanceof UserNotFoundException || e instanceof NullPointerException)) {
+                return "redirect:/card?error=STH_WRONG";
+            }
         }
 
         try {

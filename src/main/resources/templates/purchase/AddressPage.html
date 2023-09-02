@@ -21,7 +21,7 @@
 
                 <input type="hidden" name="orderJson" th:value="${ordersJson}"/>
 
-                <div class="form-check mb-3">
+                <div th:if="${user != null}" class="form-check mb-3">
                     <input class="form-check-input" name="addressOption" type="radio" id="option1" value="existed"
                            th:field="*{option}">
                     <label class="form-check-label" for="option1">Use Default Address</label>

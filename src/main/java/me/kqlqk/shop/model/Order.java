@@ -51,7 +51,7 @@ public class Order {
     @Column(name = "realised", nullable = false)
     private boolean realised;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
 
