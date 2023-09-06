@@ -12,9 +12,11 @@ import me.kqlqk.shop.dto.OrderDTO;
 import me.kqlqk.shop.dto.OrderJsonDTO;
 import me.kqlqk.shop.exception.UserNotFoundException;
 import me.kqlqk.shop.model.Order;
+import me.kqlqk.shop.model.product.Product;
 import me.kqlqk.shop.model.user.Address;
 import me.kqlqk.shop.model.user.User;
 import me.kqlqk.shop.service.OrderService;
+import me.kqlqk.shop.service.ProductService;
 import me.kqlqk.shop.service.UserService;
 import me.kqlqk.shop.util.CookieUtil;
 import me.kqlqk.shop.util.JwtUtil;
@@ -37,12 +39,36 @@ public class PurchaseController {
     private final JwtUtil jwtUtil;
     private final UserService userService;
     private final OrderService orderService;
+    private final ProductService productService;
 
     @Autowired
-    public PurchaseController(JwtUtil jwtUtil, UserService userService, OrderService orderService) {
+    public PurchaseController(JwtUtil jwtUtil, UserService userService, OrderService orderService, ProductService productService) {
         this.jwtUtil = jwtUtil;
         this.userService = userService;
         this.orderService = orderService;
+        this.productService = productService;
+    }
+
+    @PostMapping("/temp")
+    public String redirect(Model model, @ModelAttribute("orderDTO") OrderDTO orderDTO) throws JsonProcessingException {
+        Product product = productService.getById(orderDTO.getProductId());
+        orderDTO.setProduct(product);
+        orderDTO.setColor(product.getColors().stream()
+                .filter(e -> e.getName().equals(orderDTO.getColorName()))
+                .findFirst()
+                .get());
+        orderDTO.setSize(product.getSizes().stream()
+                .filter(e -> e.getName().equals(orderDTO.getSizeName()))
+                .findFirst()
+                .get());
+
+        List<OrderDTO> orders = new ArrayList<>();
+        orders.add(orderDTO);
+
+        model.addAttribute("ordersJson", new ObjectMapper().writeValueAsString(orders));
+        model.addAttribute("newOrderJsonDTO", new OrderJsonDTO());
+
+        return "purchase/TempPage";
     }
 
     @PostMapping("/address")

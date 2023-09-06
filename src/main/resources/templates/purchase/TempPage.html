@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Temp</title>
+</head>
+<body>
+
+<form id="postForm" th:action="@{/purchase/address}" th:method="post" th:object="${newOrderJsonDTO}">
+    <input type="hidden" name="orderJson" th:value="${ordersJson}"/>
+    <button type="submit" class="btn btn-outline-dark btn-lg">Click here to continue</button>
+</form>
+
+<script>
+    function submitPostForm() {
+        document.getElementById('postForm').submit();
+    }
+
+    document.addEventListener('DOMContentLoaded', submitPostForm);
+</script>
+
+</body>
+</html>

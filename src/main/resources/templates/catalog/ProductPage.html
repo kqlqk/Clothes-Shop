@@ -42,7 +42,7 @@
             <p class="description-text" th:text="${product.getDescription()}">Description</p>
             <br>
 
-            <form th:method="post" th:action="@{/card}" th:object="${orderDTO}">
+            <form th:method="post" th:action="@{/card}" th:object="${orderDTO}" id="orderForm">
                 <div class="form-group">
                     <input type="hidden" name="productId" th:value="${product.getId()}"/>
 
@@ -76,7 +76,7 @@
 
                     <div class="d-flex flex-column gap-2">
                         <button class="btn btn-outline-dark btn-lg" type="submit">Add to Shopping Cart</button>
-                        <a class="btn btn-outline-dark btn-lg" th:href="@{/#}">Buy Now</a>
+                        <button id="buyNowButton" type="submit" class="btn btn-outline-dark btn-lg">Buy Now</button>
                     </div>
 
                 </div>
@@ -90,6 +90,14 @@
 </html>
 
 <script>
+    document.getElementById('buyNowButton').addEventListener('click', function (event) {
+        event.preventDefault();
+
+        var form = document.getElementById('orderForm');
+        form.action = '/purchase/temp';
+        form.submit();
+    });
+
     function toggleLabelClassColor(clickedLabel) {
         var labels = document.querySelectorAll('#chooseColor label');
         for (var i = 0; i < labels.length; i++) {
