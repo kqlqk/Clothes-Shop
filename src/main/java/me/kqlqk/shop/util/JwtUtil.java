@@ -173,7 +173,7 @@ public class JwtUtil {
             throw new TokenException("Signature invalid");
         }
         catch (Exception e) {
-            throw new TokenException("Token invalid"); // TODO: 09/07/2023 throw nested ex
+            throw new TokenException("Token invalid", e);
         }
     }
 
