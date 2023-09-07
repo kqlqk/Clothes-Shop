@@ -106,21 +106,21 @@ public class UserController {
         try {
             user.setAddress(Formatter.convertToSave(addressDTO, userDb.getAddress()));
             userService.update(user);
+
+            if (!user.getEmail().isBlank() && !oldEmail.equalsIgnoreCase(user.getEmail())) {
+                Cookie cookie = new Cookie("accessToken", jwtUtil.generateAccessToken(userDTO.getEmail()));
+                cookie.setPath("/");
+                cookie.setMaxAge(36000);
+                response.addCookie(cookie);
+
+                jwtUtil.updateRefreshTokenWithNewEmail(user.getEmail());
+            }
         }
         catch (AddressException e) {
             prefix = "?errors=addressDTO.address_First time you should fill all address' form";
         }
         catch (UserExistsException e) {
             prefix = "?errors=addressDTO.address_Email already exists";
-        }
-
-        if (!oldEmail.equalsIgnoreCase(user.getEmail())) {
-            Cookie cookie = new Cookie("accessToken", jwtUtil.generateAccessToken(userDTO.getEmail()));
-            cookie.setPath("/");
-            cookie.setMaxAge(36000);
-            response.addCookie(cookie);
-
-            jwtUtil.updateRefreshTokenWithNewEmail(user.getEmail());
         }
 
         return "redirect:/user/" + id + (prefix == null ? "" : prefix);
