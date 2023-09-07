@@ -43,7 +43,8 @@ public class CardController {
     }
 
     @GetMapping
-    public String getCardPage(HttpServletRequest request, Model model, HttpServletResponse response) throws JsonProcessingException {
+    public String getCardPage(HttpServletRequest request, Model model, HttpServletResponse response,
+                              @RequestParam(value = "error", required = false) String error) throws JsonProcessingException {
         List<OrderDTO> orders = new ArrayList<>();
 
         try {
@@ -84,6 +85,7 @@ public class CardController {
         model.addAttribute("newOrderDTO", new OrderDTO());
         model.addAttribute("ordersJson", new ObjectMapper().writeValueAsString(orders));
         model.addAttribute("newOrderJsonDTO", new OrderJsonDTO());
+        model.addAttribute("error", error);
 
         return "user/CardPage";
     }

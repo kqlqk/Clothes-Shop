@@ -83,7 +83,7 @@ public class PurchaseController {
         }
         catch (RuntimeException e) {
             if (!(e instanceof UserNotFoundException || e instanceof NullPointerException)) {
-                return "redirect:/card?error=STH_WRONG"; // todo Handle
+                return "redirect:/card?error=STH_WRONG";
             }
         }
 

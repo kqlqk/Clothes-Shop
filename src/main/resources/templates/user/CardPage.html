@@ -13,6 +13,9 @@
 <header th:insert="~{Header}"></header>
 
 <div class="row justify-content-center main-content">
+    <h2 th:if="${error!=null && error.equalsIgnoreCase('STH_WRONG')}" th:text="${'Sorry, something went wrong'}"
+        style="color: red"></h2>
+
     <div th:if="${!orders.isEmpty()}">
         <div th:each="order : ${orders}">
             <div class="card mb-3 position-relative">
