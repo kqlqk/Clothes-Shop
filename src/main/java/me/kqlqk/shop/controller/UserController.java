@@ -92,6 +92,10 @@ public class UserController {
             return "redirect:/user/" + id + "?errors=";
         }
 
+        if (!combinedDTO.getUserDTO().getEmail().isBlank()) {
+            combinedDTO.getUserDTO().setEmail(combinedDTO.getUserDTO().getEmail().toLowerCase());
+        }
+
         String prefix = null;
         UserDTO userDTO = combinedDTO.getUserDTO();
         AddressDTO addressDTO = combinedDTO.getAddressDTO();

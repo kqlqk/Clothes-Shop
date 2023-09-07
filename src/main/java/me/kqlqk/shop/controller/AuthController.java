@@ -50,6 +50,7 @@ public class AuthController {
     @PostMapping("/login")
     public String logIn(@ModelAttribute(name = "loginDTO") LoginDTO loginDTO,
                         HttpServletResponse response) {
+        loginDTO.setEmail(loginDTO.getEmail().toLowerCase());
         User user;
         try {
             user = userService.getByEmail(loginDTO.getEmail());
@@ -87,6 +88,7 @@ public class AuthController {
     @PostMapping("/registration")
     public String signUp(@ModelAttribute(name = "registrationDTO") RegistrationDTO registrationDTO,
                          HttpServletResponse response) {
+        registrationDTO.setEmail(registrationDTO.getEmail().toLowerCase());
         User user = new User();
         user.setEmail(registrationDTO.getEmail());
         user.setName(registrationDTO.getName());
