@@ -50,7 +50,7 @@ public class CardServiceImplIT {
 
     @Test
     @Transactional
-    public void update_shouldUpdateProductInDB() {
+    public void update_shouldUpdateCardInDB() {
         Card card = cardService.getByUser(userService.getById(1)).get(0);
         card.setSize(productService.getById(1).getSizes().get(1));
 
@@ -68,7 +68,7 @@ public class CardServiceImplIT {
 
     @Test
     @Transactional
-    public void remove_shouldRemoveProductInDB() {
+    public void remove_shouldRemoveCardFromDB() {
         int oldSize = cardRepository.findAll().size();
 
         Card card = cardService.getByUser(userService.getById(1)).get(0);

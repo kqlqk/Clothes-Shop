@@ -29,7 +29,7 @@ public class OrderServiceImplIT {
 
     @Test
     @Transactional
-    public void add_shouldAddUserToDB() {
+    public void add_shouldAddOrderToDB() {
         int oldSize = orderRepository.findAll().size();
 
         Product product = productService.getById(1);
@@ -58,7 +58,7 @@ public class OrderServiceImplIT {
 
     @Test
     @Transactional
-    public void update_shouldUpdateUserInDB() {
+    public void update_shouldUpdateOrderInDB() {
         Order order = orderService.getById(1);
         order.setColor(productService.getById(1).getColors().get(1));
 

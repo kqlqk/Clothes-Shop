@@ -21,14 +21,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product getById(long id) {
-        return productRepository.findById(id).orElseThrow(() ->
-                new ProductNotFoundException("Product with id = " + id + " not found"));
+        return productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("Product with id = " + id + " not found"));
     }
 
     @Override
     public Product getByName(String name) {
-        return productRepository.findByName(name).orElseThrow(() ->
-                new ProductNotFoundException("Product with name = " + name + " not found"));
+        return productRepository.findByName(name).orElseThrow(() -> new ProductNotFoundException("Product with name = " + name + " not found"));
     }
 
     @Override
@@ -62,7 +60,33 @@ public class ProductServiceImpl implements ProductService {
         if (!productRepository.existsById(product.getId())) {
             throw new ProductNotFoundException("Product with id = " + product.getId() + " not found");
         }
-        // TODO: 22/07/2023 add checking like in userServiceImpl
+
+        Product productDb = getById(product.getId());
+
+        if (product.getName() == null || product.getName().isBlank()) {
+            product.setName(productDb.getName());
+        }
+
+        if (product.getPrice() == 0) {
+            product.setPrice(productDb.getPrice());
+        }
+
+        if (product.getDescription() == null || product.getDescription().isBlank()) {
+            product.setDescription(productDb.getDescription());
+        }
+
+        if (product.getColors() == null || product.getColors().isEmpty()) {
+            product.setColors(productDb.getColors());
+        }
+
+        if (product.getSizes() == null || product.getSizes().isEmpty()) {
+            product.setSizes(productDb.getSizes());
+        }
+
+        if (product.getPath() == null || product.getPath().isBlank()) {
+            product.setPath(productDb.getPath());
+        }
+
         productRepository.save(product);
     }
 

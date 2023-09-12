@@ -57,6 +57,24 @@ public class CardServiceImpl implements CardService {
             throw new CardNotFoundException("Card with id = " + card.getId() + " not found");
         }
 
+        Card cardDb = getById(card.getId());
+
+        if (card.getColor() == null) {
+            card.setColor(cardDb.getColor());
+        }
+
+        if (card.getSize() == null) {
+            card.setSize(cardDb.getSize());
+        }
+
+        if (card.getProduct() == null) {
+            card.setProduct(cardDb.getProduct());
+        }
+
+        if (card.getUser() == null) {
+            card.setUser(cardDb.getUser());
+        }
+
         cardRepository.save(card);
     }
 

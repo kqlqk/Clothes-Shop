@@ -73,7 +73,40 @@ public class OrderServiceImpl implements OrderService {
         if (!orderRepository.existsById(order.getId())) {
             throw new OrderNotFoundException("Order with id = " + order.getId() + " not found");
         }
-        // TODO: 22/07/2023 add checking like in userServiceImpl
+
+        Order orderDb = getById(order.getId());
+
+        if (order.getColor() == null) {
+            order.setColor(orderDb.getColor());
+        }
+
+        if (order.getSize() == null) {
+            order.setSize(orderDb.getSize());
+        }
+
+        if (order.getProduct() == null) {
+            order.setProduct(orderDb.getProduct());
+        }
+
+        if (order.getUser() == null) {
+            order.setUser(orderDb.getUser());
+        }
+
+        if (order.getCreateDate() == null) {
+            order.setCreateDate(orderDb.getCreateDate());
+        }
+
+        if (order.getDeliveredDate() == null) {
+            order.setDeliveredDate(orderDb.getDeliveredDate());
+        }
+
+        if (order.getUuid() == 0) {
+            order.setUuid(orderDb.getUuid());
+        }
+
+        if (order.getAddress() == null) {
+            order.setAddress(orderDb.getAddress());
+        }
 
         orderRepository.save(order);
     }

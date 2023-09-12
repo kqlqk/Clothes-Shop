@@ -20,8 +20,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Override
     public RefreshToken getByUserEmail(String email) {
-        return refreshTokenRepository.findByUserEmail(email).orElseThrow(
-                () -> new RefreshTokenNotFoundException("Refresh token with email = " + email + " not found"));
+        return refreshTokenRepository.findByUserEmail(email).orElseThrow(() -> new RefreshTokenNotFoundException("Refresh token with email = " + email + " not found"));
     }
 
     @Override
@@ -40,6 +39,16 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     public void update(@NonNull RefreshToken refreshToken) {
         if (!refreshTokenRepository.existsById(refreshToken.getId())) {
             throw new RefreshTokenNotFoundException("Refresh token with id = " + refreshToken.getId() + " not found");
+        }
+
+        RefreshToken refreshTokenDb = getByUserEmail(refreshToken.getToken());
+
+        if (refreshToken.getToken() == null || refreshToken.getToken().isBlank()) {
+            refreshToken.setToken(refreshTokenDb.getToken());
+        }
+
+        if (refreshToken.getUser() == null) {
+            refreshToken.setUser(refreshTokenDb.getUser());
         }
 
         refreshTokenRepository.save(refreshToken);
