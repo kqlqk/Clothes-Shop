@@ -41,7 +41,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
             throw new RefreshTokenNotFoundException("Refresh token with id = " + refreshToken.getId() + " not found");
         }
 
-        RefreshToken refreshTokenDb = getByUserEmail(refreshToken.getToken());
+        RefreshToken refreshTokenDb = getByUserEmail(refreshToken.getUser().getEmail());
 
         if (refreshToken.getToken() == null || refreshToken.getToken().isBlank()) {
             refreshToken.setToken(refreshTokenDb.getToken());

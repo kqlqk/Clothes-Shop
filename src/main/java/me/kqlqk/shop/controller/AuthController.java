@@ -69,7 +69,7 @@ public class AuthController {
 
         Cookie cookie = new Cookie("accessToken", jwtUtil.generateAccessToken(loginDTO.getEmail()));
         cookie.setPath("/");
-        cookie.setMaxAge(36000);
+        cookie.setMaxAge(10 * 365 * 24 * 60 * 60);
         response.addCookie(cookie);
 
         jwtUtil.generateAndSaveOrUpdateRefreshToken(loginDTO.getEmail());

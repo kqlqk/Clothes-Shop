@@ -55,6 +55,6 @@ public class MainController {
             model.addAttribute("productsDiscounts", productsDiscounts);
         }
 
-        return "SearchPage";
+        return "catalog/SearchPage";
     }
 }

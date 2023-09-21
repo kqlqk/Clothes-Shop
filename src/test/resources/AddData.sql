@@ -75,11 +75,13 @@ insert into refresh_token (customer_id, token)
 values (1, 'token1');
 
 
-insert into buying_order (product_id, size_id, color_id, realised, create_date, delivered_date, uuid, customer_id)
-values (1, 1, 1, false, '10/07/2023 02:00:00', null, 2, 1);
+insert into buying_order (product_id, size_id, color_id, realised, create_date, delivered_date, uuid, customer_id,
+                          address_id)
+values (1, 1, 1, false, '10/07/2023 02:00:00', null, 2, 1, 1);
 
-insert into buying_order (product_id, size_id, color_id, realised, create_date, delivered_date, uuid, customer_id)
-values (2, 2, 2, true, '03/06/2023 12:42:43', null, 1, null);
+insert into buying_order (product_id, size_id, color_id, realised, create_date, delivered_date, uuid, customer_id,
+                          address_id)
+values (2, 2, 2, true, '03/06/2023 12:42:43', null, 1, null, 2);
 
 
 insert into shopping_card(customer_id, product_id, color_id, size_id)

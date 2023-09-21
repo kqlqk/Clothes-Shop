@@ -61,7 +61,8 @@ public class AuthControllerIT {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(view().name("auth/LoginPage"))
-                .andExpect(model().attributeExists("loginDTO"));
+                .andExpect(model().attributeExists("loginDTO"))
+                .andExpect(model().attributeExists("errorParam"));
     }
 
     @Test
@@ -84,7 +85,8 @@ public class AuthControllerIT {
 
     @Test
     public void logIn_shouldThrowException() throws Exception {
-        when(authManager.authenticate(any())).thenThrow(new BadCredentialsException("Bad credentials"),
+        when(authManager.authenticate(any())).thenThrow(
+                new BadCredentialsException("Bad credentials"),
                 new UserNotFoundException("User not found"),
                 new RuntimeException("Random exception"));
 
@@ -121,7 +123,6 @@ public class AuthControllerIT {
                 .andExpect(status().isOk())
                 .andExpect(view().name("auth/RegistrationPage"))
                 .andExpect(model().attributeExists("registrationDTO"));
-
 
         mockMvc.perform(get("/registration?error=UNKNOWN"))
                 .andDo(print())
@@ -160,9 +161,7 @@ public class AuthControllerIT {
                 .andExpect(cookie().doesNotExist("accessToken"))
                 .andExpect(redirectedUrl("/registration?error=" + RegistrationErrorParam.USER_EXISTS));
 
-        doThrow(new RuntimeException("Random exception"))
-                .when(userService)
-                .add(any());
+        doThrow(new RuntimeException("Random exception")).when(userService).add(any());
 
         registrationDTO = new RegistrationDTO("email3@email.com", "name", "Password1");
         model.addAttribute("registrationDTO", registrationDTO);

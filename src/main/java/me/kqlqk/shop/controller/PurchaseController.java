@@ -50,7 +50,7 @@ public class PurchaseController {
     }
 
     @PostMapping("/temp")
-    public String redirect(Model model, @ModelAttribute("orderDTO") OrderDTO orderDTO) throws JsonProcessingException {
+    public String redirectFromBuyNowButton(Model model, @ModelAttribute("orderDTO") OrderDTO orderDTO) throws JsonProcessingException {
         Product product = productService.getById(orderDTO.getProductId());
         orderDTO.setProduct(product);
         orderDTO.setColor(product.getColors().stream()

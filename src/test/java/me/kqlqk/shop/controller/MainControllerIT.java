@@ -7,8 +7,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ControllerTest
 public class MainControllerIT {
@@ -20,7 +19,11 @@ public class MainControllerIT {
         mockMvc.perform(get("/"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(view().name("MainPage"));
+                .andExpect(view().name("MainPage"))
+                .andExpect(model().attributeExists("saleProducts"))
+                .andExpect(model().attributeExists("newProducts"))
+                .andExpect(model().attributeExists("saleProductsDiscounts"))
+                .andExpect(model().attributeExists("newProductsDiscounts"));
     }
 
     @Test
@@ -29,7 +32,7 @@ public class MainControllerIT {
                         .param("search", "white"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(view().name("SearchPage"));
+                .andExpect(view().name("catalog/SearchPage"));
 
         mockMvc.perform(get("/search"))
                 .andDo(print())
