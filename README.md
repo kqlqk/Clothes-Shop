@@ -14,7 +14,7 @@
 Example of a clothes shop.<br>
 Any suggestions/reports/offers - Telegram @CallMeForSquats; Mail - kononchukworkmail@gmail.com
 <br>
-<h4>Stack<h4/>
+<h4>Stack</h4>
 <pre>
     Backend:
         Java
