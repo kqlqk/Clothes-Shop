@@ -1,5 +1,6 @@
-/src/main/resources/application.properties
+/src/main/resources/application-dev.properties
+/src/main/resources/application-docker.properties
 /.idea
 .DS_Store
 /target
-/src/test/resources/application.properties
+/src/test/resources/application-test.properties
