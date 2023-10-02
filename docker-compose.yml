@@ -1,0 +1,30 @@
+version: '3.9'
+services:
+  shop_db:
+    container_name: shop_db
+    image: postgres:16
+    ports:
+      - "5433:5432"
+    volumes:
+      - /Users/kqlqk/sql/data:/var/lib/postgresql/data
+      - /Users/kqlqk/sql/init-scripts:/docker-entrypoint-initdb.d
+    environment:
+      POSTGRES_DB: shop
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 0000 #dev mode, not prod
+    networks:
+      network-1:
+
+  shop:
+    container_name: shop
+    image: shop_image
+    depends_on:
+      shop_db:
+        condition: service_started
+    ports:
+      - "8081:8081"
+    networks:
+      network-1:
+
+networks:
+  network-1:
