@@ -21,7 +21,7 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", insertable = false, updatable = false)
-    private long id;
+    private long id; // TODO change to int
 
     @ManyToOne
     @JoinColumn(name = "color_id", referencedColumnName = "id")
@@ -46,7 +46,7 @@ public class Order {
     private LocalDateTime deliveredDate;
 
     @Column(name = "uuid", nullable = false)
-    private int uuid;
+    private int uuid; // TODO rename
 
     @Column(name = "realised", nullable = false)
     private boolean realised;
