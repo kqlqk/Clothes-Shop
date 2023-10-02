@@ -12,6 +12,7 @@ import me.kqlqk.shop.repository.ProductRepository;
 import me.kqlqk.shop.service.impl.ProductServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,6 +75,7 @@ public class ProductServiceImplIT {
     }
 
     @Test
+    @Transactional
     public void update_shouldUpdateProductInDB() {
         Product product = productService.getById(1);
         product.setDescription("new description");
