@@ -8,7 +8,7 @@ import java.util.List;
 
 @Service
 public interface OrderService {
-    Order getById(long id);
+    Order getById(int id);
 
     List<Order> getByUser(User user);
 
