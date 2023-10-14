@@ -21,7 +21,7 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", insertable = false, updatable = false)
-    private long id; // TODO change to int
+    private int id;
 
     @ManyToOne
     @JoinColumn(name = "color_id", referencedColumnName = "id")
