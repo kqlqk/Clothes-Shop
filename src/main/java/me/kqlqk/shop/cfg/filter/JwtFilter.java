@@ -33,9 +33,8 @@ public class JwtFilter extends OncePerRequestFilter {
     private final RefreshTokenService refreshTokenService;
     private final UserService userService;
     private UserDetailsService userDetailsService;
-
-    @Value("${admin.email}")
-    private String adminEmail;
+    @Value("${admin.emails}")
+    private String[] adminEmails;
 
     @Autowired
     public JwtFilter(JwtUtil jwtUtil, RefreshTokenService refreshTokenService, UserService userService) {
@@ -91,10 +90,19 @@ public class JwtFilter extends OncePerRequestFilter {
             }
         }
 
-        // TODO change hardcoded part
-        if (request.getRequestURI().startsWith("/admin") && !email.equalsIgnoreCase(adminEmail)) {
-            response.sendRedirect("redirect:/");
-            return;
+        if (request.getRequestURI().startsWith("/admin")) {
+            boolean exist = false;
+            for (String e : adminEmails) {
+                if (e.equalsIgnoreCase(email)) {
+                    exist = true;
+                    break;
+                }
+            }
+
+            if (!exist) {
+                response.sendRedirect("redirect:/");
+                return;
+            }
         }
 
         try {
