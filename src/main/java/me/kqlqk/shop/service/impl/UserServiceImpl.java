@@ -11,6 +11,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.nio.CharBuffer;
+
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
@@ -48,7 +50,7 @@ public class UserServiceImpl implements UserService {
             throw new UserExistsException("User with address = " + user.getAddress() + " exists");
         }
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(CharBuffer.wrap(user.getPassword())).toCharArray());
 
         userRepository.save(user);
     }
@@ -81,11 +83,11 @@ public class UserServiceImpl implements UserService {
             user.setCard(userDb.getCard());
         }
 
-        if (user.getPassword() == null || user.getPassword().isBlank()) {
+        if (user.getPassword() == null) {
             user.setPassword(userDb.getPassword());
         }
         else {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setPassword(passwordEncoder.encode(CharBuffer.wrap(user.getPassword())).toCharArray());
         }
 
         userRepository.save(user);

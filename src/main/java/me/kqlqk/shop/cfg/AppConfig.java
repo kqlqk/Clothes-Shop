@@ -68,7 +68,7 @@ public class AppConfig {
 
             return new org.springframework.security.core.userdetails.User(
                     userDB.getEmail(),
-                    userDB.getPassword(),
+                    new String(userDB.getPassword()),
                     Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
         };
     }

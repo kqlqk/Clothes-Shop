@@ -30,12 +30,12 @@ public class AdminControllerIT {
 
     private Cookie accessToken;
 
-    @Value("${admin.email}")
-    private String email;
+    @Value("${admin.emails}")
+    private String[] emails;
 
     @BeforeEach
     public void beforeEach() {
-        accessToken = new Cookie("accessToken", jwtUtil.generateAccessToken(email));
+        accessToken = new Cookie("accessToken", jwtUtil.generateAccessToken(emails[0]));
     }
 
     @Test

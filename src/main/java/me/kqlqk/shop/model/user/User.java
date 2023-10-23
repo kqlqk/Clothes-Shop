@@ -27,7 +27,7 @@ public class User {
     private String name;
 
     @Column(name = "password", nullable = false, length = 50)
-    private String password; // TODO: 22/06/2023 Change to char[]
+    private char[] password;
 
     @OneToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "address_id", referencedColumnName = "id")
@@ -38,7 +38,7 @@ public class User {
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
     private List<Card> card;
 
-    public User(String email, String name, String password, Address address) {
+    public User(String email, String name, char[] password, Address address) {
         this.email = email;
         this.name = name;
         this.password = password;

@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Arrays;
+
 @Controller
 @Slf4j
 public class AuthController {
@@ -51,6 +53,7 @@ public class AuthController {
     public String logIn(@ModelAttribute(name = "loginDTO") LoginDTO loginDTO,
                         HttpServletResponse response) {
         loginDTO.setEmail(loginDTO.getEmail().toLowerCase());
+
         User user;
         try {
             user = userService.getByEmail(loginDTO.getEmail());
@@ -65,6 +68,9 @@ public class AuthController {
                 log.warn("Something went wrong while login ", e);
                 return "redirect:/login?error=" + LoginErrorParam.UNKNOWN;
             }
+        }
+        finally {
+            Arrays.fill(loginDTO.getPassword(), '0');
         }
 
         Cookie cookie = new Cookie("accessToken", jwtUtil.generateAccessToken(loginDTO.getEmail()));
@@ -89,6 +95,7 @@ public class AuthController {
     public String signUp(@ModelAttribute(name = "registrationDTO") RegistrationDTO registrationDTO,
                          HttpServletResponse response) {
         registrationDTO.setEmail(registrationDTO.getEmail().toLowerCase());
+
         User user = new User();
         user.setEmail(registrationDTO.getEmail());
         user.setName(registrationDTO.getName());
@@ -106,6 +113,9 @@ public class AuthController {
                 log.warn("Something went wrong while registration ", e);
                 return "redirect:/registration?error=" + RegistrationErrorParam.UNKNOWN;
             }
+        }
+        finally {
+            Arrays.fill(registrationDTO.getPassword(), '0');
         }
 
         Cookie cookie = new Cookie("accessToken", jwtUtil.generateAccessToken(user.getEmail()));

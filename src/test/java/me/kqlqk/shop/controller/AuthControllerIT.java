@@ -70,7 +70,7 @@ public class AuthControllerIT {
         when(authManager.authenticate(any())).thenReturn(new UsernamePasswordAuthenticationToken("email@email.com", "password1"));
 
         ModelMap model = new ModelMap();
-        LoginDTO loginDTO = new LoginDTO("email@email.com", "Password1");
+        LoginDTO loginDTO = new LoginDTO("email@email.com", new char[]{'P', 'a', 's', 's', 'w', 'o', 'r', 'd', '1'});
         model.addAttribute("loginDTO", loginDTO);
 
         mockMvc.perform(post("/login")
@@ -91,7 +91,7 @@ public class AuthControllerIT {
                 new RuntimeException("Random exception"));
 
         ModelMap model = new ModelMap();
-        LoginDTO loginDTO = new LoginDTO("email@email.com", "Password1");
+        LoginDTO loginDTO = new LoginDTO("email@email.com", new char[]{'P', 'a', 's', 's', 'w', 'o', 'r', 'd', '1'});
         model.addAttribute("loginDTO", loginDTO);
 
         mockMvc.perform(post("/login")
@@ -135,7 +135,7 @@ public class AuthControllerIT {
     @Test
     public void signUp_shouldSignUpUser() throws Exception {
         ModelMap model = new ModelMap();
-        RegistrationDTO registrationDTO = new RegistrationDTO("email3@email.com", "name", "Password1");
+        RegistrationDTO registrationDTO = new RegistrationDTO("email3@email.com", "name", new char[]{'P', 'a', 's', 's', 'w', 'o', 'r', 'd', '1'});
         model.addAttribute("registrationDTO", registrationDTO);
 
         mockMvc.perform(post("/registration")
@@ -151,7 +151,7 @@ public class AuthControllerIT {
     @Test
     public void signUp_shouldThrowException() throws Exception {
         ModelMap model = new ModelMap();
-        RegistrationDTO registrationDTO = new RegistrationDTO("email@email.com", "name", "Password1");
+        RegistrationDTO registrationDTO = new RegistrationDTO("email@email.com", "name", new char[]{'P', 'a', 's', 's', 'w', 'o', 'r', 'd', '1'});
         model.addAttribute("registrationDTO", registrationDTO);
 
         mockMvc.perform(post("/registration")
@@ -163,7 +163,7 @@ public class AuthControllerIT {
 
         doThrow(new RuntimeException("Random exception")).when(userService).add(any());
 
-        registrationDTO = new RegistrationDTO("email3@email.com", "name", "Password1");
+        registrationDTO = new RegistrationDTO("email3@email.com", "name", new char[]{'P', 'a', 's', 's', 'w', 'o', 'r', 'd', '1'});
         model.addAttribute("registrationDTO", registrationDTO);
 
         mockMvc.perform(post("/registration")

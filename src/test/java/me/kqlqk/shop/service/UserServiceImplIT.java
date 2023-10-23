@@ -25,7 +25,7 @@ public class UserServiceImplIT {
     public void add_shouldAddUserToDB() {
         int oldSize = userRepository.findAll().size();
 
-        User user = new User("test@test.com", "user", "Password1", null);
+        User user = new User("test@test.com", "user", new char[]{'P', 'a', 's', 's', 'w', 'o', 'r', 'd', '1'}, null);
 
         userService.add(user);
 
@@ -43,11 +43,11 @@ public class UserServiceImplIT {
         User userExistedById = user;
         assertThrows(UserExistsException.class, () -> userService.add(userExistedById));
 
-        user = new User("email@email.com", "aaa", "password", null);
+        user = new User("email@email.com", "aaa", new char[]{'p', 'a', 's', 's', 'w', 'o', 'r', 'd'}, null);
         User userExistedByEmail = user;
         assertThrows(UserExistsException.class, () -> userService.add(userExistedByEmail));
 
-        user = new User("new@email.com", "aaa", "password", userService.getById(1).getAddress());
+        user = new User("new@email.com", "aaa", new char[]{'p', 'a', 's', 's', 'w', 'o', 'r', 'd'}, userService.getById(1).getAddress());
         User userExistedByAddress = user;
         assertThrows(UserExistsException.class, () -> userService.add(userExistedByAddress));
     }
@@ -64,7 +64,7 @@ public class UserServiceImplIT {
 
     @Test
     public void update_shouldThrowException() {
-        User user = new User("new@email.com", "a", "Password1", null);
+        User user = new User("new@email.com", "a", new char[]{'P', 'a', 's', 's', 'w', 'o', 'r', 'd', '1'}, null);
         user.setId(99);
         User userWithExistedId = user;
         assertThrows(UserNotFoundException.class, () -> userService.update(userWithExistedId));

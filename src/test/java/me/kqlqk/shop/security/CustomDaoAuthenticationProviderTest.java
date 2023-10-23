@@ -13,6 +13,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.nio.CharBuffer;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
@@ -39,11 +41,12 @@ public class CustomDaoAuthenticationProviderTest {
     public void authenticate_shouldAuthenticateReturnAuthToken() {
         User user = new User();
         user.setEmail("email@email.com");
+        user.setPassword(new char[]{'a', 'b', 'c'});
 
         when(authentication.getPrincipal()).thenReturn(user);
         when(userDetailsService.loadUserByUsername("email@email.com")).thenReturn(userDetails);
-        when(authentication.getCredentials()).thenReturn("password");
-        when(passwordEncoder.matches("password", userDetails.getPassword())).thenReturn(true);
+        when(authentication.getCredentials()).thenReturn(new char[]{'p', 'a', 's', 's', 'w', 'o', 'r', 'd'});
+        when(passwordEncoder.matches(CharBuffer.wrap(new char[]{'p', 'a', 's', 's', 'w', 'o', 'r', 'd'}), new String(user.getPassword()))).thenReturn(true);
 
         Authentication token = customDaoAuthenticationProvider.authenticate(authentication);
 
@@ -54,11 +57,12 @@ public class CustomDaoAuthenticationProviderTest {
     public void authenticate_shouldThrowException() {
         User user = new User();
         user.setEmail("email@email.com");
+        user.setPassword(new char[]{'a', 'b', 'c'});
 
         when(authentication.getPrincipal()).thenReturn(user);
         when(userDetailsService.loadUserByUsername("email@email.com")).thenReturn(userDetails);
-        when(authentication.getCredentials()).thenReturn("password");
-        when(passwordEncoder.matches("password", userDetails.getPassword())).thenReturn(false);
+        when(authentication.getCredentials()).thenReturn(new char[]{'p', 'a', 's', 's', 'w', 'o', 'r', 'd'});
+        when(passwordEncoder.matches(CharBuffer.wrap(new char[]{'p', 'a', 's', 's', 'w', 'o', 'r', 'd'}), new String(user.getPassword()))).thenReturn(false);
 
         assertThrows(BadCredentialsException.class, () -> customDaoAuthenticationProvider.authenticate(authentication));
     }

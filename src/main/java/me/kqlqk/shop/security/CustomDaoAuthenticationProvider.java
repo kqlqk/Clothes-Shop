@@ -12,6 +12,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.nio.CharBuffer;
+import java.util.Arrays;
+
 @Component
 public class CustomDaoAuthenticationProvider implements AuthenticationProvider {
     private final UserDetailsService userDetailsService;
@@ -26,13 +29,18 @@ public class CustomDaoAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         User user = (User) authentication.getPrincipal();
-        String password = (String) authentication.getCredentials();
+        char[] password = (char[]) authentication.getCredentials();
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
 
-        if (passwordEncoder.matches(password, userDetails.getPassword())) {
+        if (passwordEncoder.matches(CharBuffer.wrap(password), new String(user.getPassword()))) {
+            Arrays.fill((char[]) authentication.getCredentials(), '0');
+
             return new UsernamePasswordAuthenticationToken(user, password, userDetails.getAuthorities());
-        } else {
+        }
+        else {
+            Arrays.fill((char[]) authentication.getCredentials(), '0');
+
             throw new BadCredentialsException("Bad credentials");
         }
     }
