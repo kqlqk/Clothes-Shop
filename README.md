@@ -33,7 +33,6 @@ Any suggestions/reports/offers - Telegram @CallMeForSquats; Mail - kononchukwork
 <pre>
 CI/CD
 Fix admin panel
-Rest api
 </pre>
 
 <h3>
